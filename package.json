@@ -1,0 +1,28 @@
+{
+  "name": "shipnow",
+  "version": "1.0.0",
+  "description": "API de logistica/envios ShipNow - baseline didactico (v1 sucio) para el curso Backend 3 de CoderHouse",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "nodemon src/index.js",
+    "dev": "node src/index.js",
+    "seed": "node src/seed.js"
+  },
+  "keywords": [
+    "coderhouse",
+    "backend",
+    "express",
+    "mongoose",
+    "logistica"
+  ],
+  "author": "CoderHouse",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^4.19.2",
+    "mongoose": "^8.4.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^10.5.0"
+  }
+}
