@@ -1,5 +1,5 @@
 node_modules
 postman
-.env.example
+.env
 *.log
 seed.js
