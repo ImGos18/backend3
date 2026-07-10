@@ -24,8 +24,9 @@ app.use("/api/deliveries", deliveriesRouter);
 app.get("/", (req, res) => {
   res.send("ShipNow API v1 - corriendo");
 });
-
-app.use("/api/mocks", mocksRouter);
+if (config.NODE_ENV !== "production") {
+  app.use("/api/mocks", mocksRouter);
+}
 
 // Conectamos a la base y levantamos el server.
 connectDB();

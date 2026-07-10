@@ -16,6 +16,19 @@ class UserService {
 
     return user;
   }
+  static async getAll() {
+    const users = await UserRepository.getAll();
+    return users;
+  }
+  static async getOne({ id }) {
+    if (!id) throw new Error("no ingresaste ningun id");
+    const user = await UserRepository.getOne({ id });
+    return user;
+  }
+  static async getRandom() {
+    const usersRandom = UserRepository.getRandom();
+    return usersRandom;
+  }
 }
 
 module.exports = UserService;

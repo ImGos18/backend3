@@ -1,6 +1,6 @@
 const dotenv = require("dotenv");
 
-dotenv.config({ path: ".env.example" });
+dotenv.config();
 
 const REQUIRES_ENV_VARS = ["PORT", "SECRET", "MONGO_URI", "NODE_ENV"];
 
@@ -14,6 +14,7 @@ const config = {
   PORT: process.env.PORT,
   SECRET: process.env.SECRET,
   MONGO_URI: process.env.MONGO_URI,
+  NODE_ENV: process.env.NODE_ENV,
 };
 
 module.exports = config;

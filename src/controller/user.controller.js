@@ -1,12 +1,11 @@
+const user = require("../models/user");
 const UserService = require("../services/users.service");
 const fillUserData = require("./../../mocks/userMocks");
 
 class UserController {
   static async create(req, res) {
     try {
-      const { name, email, role } = req.body;
-
-      const user = await UserService.create({ name, email, role });
+      const user = await UserService.create(req.body);
 
       console.log("User creado:", user._id);
       res.status(201).json(user);
@@ -15,17 +14,25 @@ class UserController {
       res.status(500).send("Error del servidor");
     }
   }
-  static async fillDB(req, res) {
+  static async getAll(req, res) {
     try {
-      let users = [];
-      for (let i = 0; i < 100; i++) {
-        const user = await UserService.create(fillUserData());
-        users.push(user);
-      }
-      res.status(201).json({ status: "ok", users });
-    } catch (error) {
-      console.log("Error al crear user:", error.message);
-      res.status(500).send("Error del servidor");
+      const users = await UserService.getAll();
+      res
+        .status(200)
+        .json({ status: "sucess", results: users.length, data: users });
+    } catch (err) {
+      console.log("algo salio mal al obtener los usuarios", err.message);
+      res.status(500).send("error del servidor ");
+    }
+  }
+  static async getOne(req, res) {
+    try {
+      console.log(req.params);
+      const user = await UserService.getOne(req.params);
+      res.status(200).json({ status: "sucess", data: user });
+    } catch (err) {
+      console.log("algo salio mal al obtener el usuario", err.message);
+      res.status(500).send("error del servidor ");
     }
   }
 }
