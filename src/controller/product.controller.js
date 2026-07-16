@@ -1,47 +1,22 @@
 const ProductService = require("../services/products.service");
+const asyncHandler = require("../utils/asyncHandler");
+const responseFormat = require("../utils/responseFormat");
 
-class ProductController {
-  static async create(req, res) {
-    try {
-      const { name, price, stock, status } = req.body;
+exports.create = asyncHandler(async (req, res, next) => {
+  const product = await ProductService.create(req.body);
 
-      const product = await ProductService.create({
-        name: name,
-        price: price,
-        stock: stock,
-        status: status,
-      });
+  console.log("producto creado:", product._id);
+  responseFormat(req, res, 201, product);
+});
 
-      console.log("producto creado:", product._id);
-      res.status(201).json(product);
-    } catch (error) {
-      console.log("Error al crear producto:", error.message);
-      res.status(500).send("Error del servidor");
-    }
-  }
+exports.getAll = asyncHandler(async (req, res, next) => {
+  const products = await ProductService.findAll();
 
-  static async getAll(req, res) {
-    try {
-      const products = await ProductService.findAll();
+  responseFormat(req, res, 200, products);
+});
 
-      res.status(200).json({ status: "success", products });
-    } catch (error) {
-      console.log("Error al obtener los productos:", error.message);
-      res.status(500).send("Error del servidor");
-    }
-  }
+exports.getOne = asyncHandler(async (req, res, next) => {
+  const product = await ProductService.getOne(req.params);
 
-  static async getOne(req, res) {
-    const { id } = req.params;
-    const product = await ProductService.getOne({ id: id });
-
-    res.status(200).json({ product });
-    try {
-    } catch (error) {
-      console.log(`error al cargar el producto: ${error.message}`);
-      res.status(500).send("Error en el servidor");
-    }
-  }
-}
-
-module.exports = ProductController;
+  responseFormat(req, res, 200, product);
+});

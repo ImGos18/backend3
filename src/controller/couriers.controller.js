@@ -1,48 +1,27 @@
-const { faker } = require("@faker-js/faker");
+const AppError = require("../errors/AppError");
+const { ERROR_CODES } = require("../errors/error-codes");
 const CourierService = require("./../services/couriers.service");
-const fillCourierData = require("./../../mocks/couriersMock");
+const asyncHandler = require("./../utils/asyncHandler");
+const responseFormat = require("./../utils/responseFormat");
 
-class CourierController {
-  static async create(req, res) {
-    try {
-      const courier = await CourierService.create(req.body);
+exports.create = asyncHandler(async (req, res, next) => {
+  const courier = await CourierService.create(req.body);
 
-      console.log("courier creado:", courier._id);
+  console.log("courier creado:", courier._id);
 
-      res.status(201).json({ courier });
-    } catch (err) {
-      console.log("algo ha salido mal:", err.message);
-      res.status(500).send("error del servidor ");
-    }
+  responseFormat(req, res, 201, courier);
+});
+exports.getAll = asyncHandler(async (req, res, next) => {
+  const allCouriers = await CourierService.getAll();
+
+  if (!allCouriers) {
+    throw new AppError(ERROR_CODES.ROUTE_NOT_FOUND);
   }
-  static async getAll(req, res) {
-    try {
-      const allCouriers = await CourierService.getAll();
 
-      res.status(200).json({
-        status: "sucess",
-        results: allCouriers.length,
-        data: allCouriers,
-      });
-    } catch (err) {
-      console.log("error al generar lista: ", err.message);
-      res.status(500).send("error del servidor ");
-    }
-  }
-  static async getOne(req, res) {
-    try {
-      const { id } = req.params;
-      const courier = await CourierService.getOne({ id });
+  responseFormat(req, res, 200, allCouriers);
+});
+exports.getOne = asyncHandler(async (req, res, next) => {
+  const courier = await CourierService.getOne(req.params);
 
-      res.status(200).json({ status: "sucess", data: courier });
-    } catch (err) {
-      console.log(
-        "algo salio mal al cargar el courier o no existe:",
-        err.message,
-      );
-      res.status(500).send("error del servidor");
-    }
-  }
-}
-
-module.exports = CourierController;
+  responseFormat(req, res, 200, courier);
+});

@@ -10,6 +10,11 @@ class OrderRepository {
     const order = await Order.findById(id);
     return order;
   }
+
+  static async getAll() {
+    const orders = await Order.find();
+    return orders;
+  }
   static async updateStatus(id, status) {
     const orderUpdated = await Order.findByIdAndUpdate(
       id,
@@ -19,6 +24,7 @@ class OrderRepository {
 
     return orderUpdated;
   }
+
   static async getRandom() {
     const order = await Order.aggregate([
       { $sample: { size: 1 } },

@@ -8,6 +8,10 @@ const couriersRouter = require("./routes/couriers");
 const productsRouter = require("./routes/products");
 const deliveriesRouter = require("./routes/deliveries");
 const mocksRouter = require("./routes/mocks");
+const {
+  errorHandler,
+  notFoundHandler,
+} = require("./middlewares/error.middleware");
 const app = express();
 
 // Middleware para parsear JSON.
@@ -34,3 +38,6 @@ connectDB();
 app.listen(config.PORT, () => {
   console.log("ShipNow escuchando en el puerto " + config.PORT);
 });
+
+app.use(notFoundHandler);
+app.use(errorHandler);
