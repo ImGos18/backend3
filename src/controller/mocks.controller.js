@@ -11,115 +11,150 @@ const fillCourierData = require("./../../mocks/couriersMock");
 const randomNumber = require("./../utils/randomNumber");
 const fillDeliveryData = require("../../mocks/deliveryMocks");
 const { DEV_TESTING_VALUES } = require("./../constants/index");
+const AppError = require("../errors/AppError");
+const { ERROR_CODES } = require("../errors/error-codes");
 
 class MockController {
   static async mockUsers(req, res) {
-    try {
-      let users = [];
-      for (let i = 0; i < DEV_TESTING_VALUES.mockResults; i++) {
-        const userData = fillUserData();
+    const { mockResults } = req.body;
 
-        if (req.method === "POST") {
-          const user = await UserService.create(userData);
-        }
-        users.push(userData);
-      }
-      res.status(201).json({ status: "ok", results: users.length, users });
-    } catch (error) {
-      console.log("Error al crear user:", error.message);
-      res.status(500).send("Error del servidor");
+    if (!mockResults) {
+      throw new AppError(
+        ERROR_CODES.VALIDATION_ERROR,
+        "debes enviar mockResults con el numero de resultados esperado ",
+      );
     }
+
+    if (mockResults <= 0 || typeof mockResults !== "number") {
+      throw new AppError(ERROR_CODES.INVALID_MOCK_RESULTS);
+    }
+
+    let users = [];
+    for (let i = 0; i < mockResults; i++) {
+      const userData = fillUserData();
+
+      if (req.method === "POST") {
+        const user = await UserService.create(userData);
+      }
+      users.push(userData);
+    }
+    res.status(201).json({ status: "ok", results: users.length, users });
   }
 
   static async mockProducts(req, res) {
-    try {
-      let prods = [];
-      for (let i = 0; i < DEV_TESTING_VALUES.mockResults; i++) {
-        const productData = fillProdData();
-        if (!req.method === "POST") {
-          const product = await ProductService.create(productData);
-        }
-        prods.push(productData);
-      }
-      res.status(201).json({
-        status: "data filled",
-        results: prods.length,
-        data: prods,
-      });
-    } catch (error) {
-      console.log("Error al crear producto:", error.message);
-      res.status(500).send("Error del servidor");
+    const { mockResults } = req.body;
+
+    if (!mockResults) {
+      throw new AppError(
+        ERROR_CODES.VALIDATION_ERROR,
+        "debes enviar mockResults con el numero de resultados esperado ",
+      );
     }
+
+    if (mockResults <= 0 || typeof mockResults !== "number") {
+      throw new AppError(ERROR_CODES.INVALID_MOCK_RESULTS);
+    }
+
+    let prods = [];
+    for (let i = 0; i < mockResults; i++) {
+      const productData = fillProdData();
+      if (!req.method === "POST") {
+        const product = await ProductService.create(productData);
+      }
+      prods.push(productData);
+    }
+    res.status(201).json({
+      status: "data filled",
+      results: prods.length,
+      data: prods,
+    });
   }
 
   static async mockCouriers(req, res) {
-    try {
-      let couriers = [];
+    const { mockResults } = req.body;
 
-      for (let i = 0; i < DEV_TESTING_VALUES.mockResults; i++) {
-        const courierData = fillCourierData();
-        if (req.method === "POST") {
-          const courier = await CourierService.create(courierData);
-        }
-        couriers.push(courierData);
-      }
-
-      res.status(201).json({
-        status: "data filled",
-        results: couriers.length,
-        data: couriers,
-      });
-    } catch (err) {
-      console.log("algo ha salido mal:", err.message);
-      res.status(500).send("algo salio mal");
+    if (!mockResults) {
+      throw new AppError(
+        ERROR_CODES.VALIDATION_ERROR,
+        "debes enviar mockResults con el numero de resultados esperado ",
+      );
     }
+
+    if (mockResults <= 0 || typeof mockResults !== "number") {
+      throw new AppError(ERROR_CODES.INVALID_MOCK_RESULTS);
+    }
+    let couriers = [];
+
+    for (let i = 0; i < mockResults; i++) {
+      const courierData = fillCourierData();
+      if (req.method === "POST") {
+        const courier = await CourierService.create(courierData);
+      }
+      couriers.push(courierData);
+    }
+
+    res.status(201).json({
+      status: "data filled",
+      results: couriers.length,
+      data: couriers,
+    });
   }
 
   static async mockOrders(req, res) {
-    try {
-      const orders = [];
+    const { mockResults } = req.body;
 
-      for (let i = 0; i < DEV_TESTING_VALUES.mockResults; i++) {
-        const orderData = await fillOrderData();
-        if (req.method === "POST") {
-          const order = await OrderService.create(orderData);
-        }
-        orders.push(orderData);
-      }
-
-      res.status(200).json({ orders });
-    } catch (err) {
-      console.log("ocurrio un error al crear la orden:", err.message);
-      res.status(400).send("error interno del servidor");
+    if (!mockResults) {
+      throw new AppError(
+        ERROR_CODES.VALIDATION_ERROR,
+        "debes enviar mockResults con el numero de resultados esperado ",
+      );
     }
+
+    if (mockResults <= 0 || typeof mockResults !== "number") {
+      throw new AppError(ERROR_CODES.INVALID_MOCK_RESULTS);
+    }
+    const orders = [];
+
+    for (let i = 0; i < mockResults; i++) {
+      const orderData = await fillOrderData();
+      if (req.method === "POST") {
+        const order = await OrderService.create(orderData);
+      }
+      orders.push(orderData);
+    }
+
+    res.status(200).json({ orders });
   }
   static async mockDeliveries(req, res) {
-    try {
-      const deliveries = [];
+    const { mockResults } = req.body;
 
-      for (let i = 0; i < DEV_TESTING_VALUES.mockResults; i++) {
-        const deliveryData = await fillDeliveryData();
+    if (!mockResults) {
+      throw new AppError(
+        ERROR_CODES.VALIDATION_ERROR,
+        "debes enviar mockResults con el numero de resultados esperado ",
+      );
+    }
 
-        if (req.method === "POST") {
-          const delivery = await DeliveriesService.create(deliveryData);
-        }
+    if (mockResults <= 0 || typeof mockResults !== "number") {
+      throw new AppError(ERROR_CODES.INVALID_MOCK_RESULTS);
+    }
+    const deliveries = [];
 
-        deliveries.push(deliveryData);
+    for (let i = 0; i < mockResults; i++) {
+      const deliveryData = await fillDeliveryData();
+
+      if (req.method === "POST") {
+        const delivery = await DeliveriesService.create(deliveryData);
       }
 
-      res.status(201).json({
-        status: "ordenes creadas",
-        results: deliveries.length,
-        deliveries,
-      });
-    } catch (err) {
-      console.log(
-        "ocurrio un error al crear las deliveries de prueba:",
-        err.message,
-      );
-      console.log(err);
-      res.status(500).send("error del servidor");
+      deliveries.push(deliveryData);
     }
+
+    res.status(201).json({
+      status: "ordenes creadas",
+      results: deliveries.length,
+      deliveries,
+    });
   }
 }
 

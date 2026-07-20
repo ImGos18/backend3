@@ -27,7 +27,7 @@ class CourierService {
     const allCouriers = await CourierRepository.getAll();
     if (!allCouriers) {
       throw new Error(
-        ERROR_CODES.ROUTE_NOT_FOUND,
+        ERROR_CODES.COURIER_NOT_FOUND,
         "no se encontraron couriers",
       );
     }

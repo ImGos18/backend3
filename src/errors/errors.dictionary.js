@@ -45,4 +45,12 @@ exports.errorsDictionary = {
     statusCode: 404,
     message: "no se encontro el producto",
   },
+  [ERROR_CODES.COURIER_NOT_FOUND]: {
+    statusCode: 404,
+    message: "no se encontro el courier",
+  },
+  [ERROR_CODES.INVALID_MOCK_RESULTS]: {
+    statusCode: 400,
+    message: "Debes ingresar un mockResults valido (numero)",
+  },
 };

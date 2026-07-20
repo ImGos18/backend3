@@ -5,7 +5,10 @@ const AppError = require("./../errors/AppError");
 class UserService {
   static async create({ name, email, role = USER_ROLES.USER }) {
     if (!name || !email) {
-      throw new AppError(400, "Faltan datos obligatorios del usuario");
+      throw new AppError(
+        ERROR_CODES.VALIDATION_ERROR,
+        "Faltan datos obligatorios del usuario",
+      );
     }
 
     //validar rol si es correcto

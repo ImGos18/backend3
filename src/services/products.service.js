@@ -37,7 +37,11 @@ class ProductService {
   }
 
   static async getOne({ id }) {
-    if (!id) throw new AppError(400, "no ingresaste ningun id");
+    if (!id)
+      throw new AppError(
+        ERROR_CODES.VALIDATION_ERROR,
+        "no ingresaste ningun id",
+      );
     const product = await ProductRepository.getOne({ id: id });
 
     if (!product)
