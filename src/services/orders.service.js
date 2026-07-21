@@ -3,6 +3,7 @@ const validateFields = require("./../utils/validateFields");
 const { ORDER_STATUS } = require("./../constants/index");
 const AppError = require("../errors/AppError");
 const { ERROR_CODES } = require("./../errors/error-codes");
+const { default: mongoose, mongo } = require("mongoose");
 
 class OrderService {
   static async create(data) {
@@ -51,18 +52,16 @@ class OrderService {
 
   static async getOne({ id }) {
     if (!id) {
-      throw new AppError(
-        ERROR_CODES.VALIDATION_ERROR,
-        "debes ingresar un id valido",
-      );
+      throw new AppError(ERROR_CODES.MISSING_OBJECT_ID);
+    }
+
+    if (!mongoose.isValidObjectId(id)) {
+      throw new AppError(ERROR_CODES.INVALID_OBJECT_ID);
     }
     const order = await OrderRepository.getOne(id);
 
     if (!order) {
-      throw new AppError(
-        ERROR_CODES.ORDER_NOT_FOUND,
-        "no se encontro ninguna orden ",
-      );
+      throw new AppError(ERROR_CODES.ORDER_NOT_FOUND);
     }
     return order;
   }
@@ -75,17 +74,15 @@ class OrderService {
   }
 
   static async updateStatus({ id }, { status }) {
-    if (!id || !status) {
-      throw new AppError(
-        ERROR_CODES.VALIDATION_ERROR,
-        "falta el id o el estado a actualizar",
-      );
+    const requiredFields = ["id", "status"];
+    validateFields({ id, status }, requiredFields);
+
+    if (!mongoose.isValidObjectId(id)) {
+      throw new AppError(ERROR_CODES.INVALID_OBJECT_ID);
     }
+
     if (!ORDER_STATUS[status.toUpperCase()]) {
-      throw new AppError(
-        ERROR_CODES.VALIDATION_ERROR,
-        "el valor de status esta fuera de rango",
-      );
+      throw new AppError(ERROR_CODES.INVALID_ORDER_STATUS);
     }
 
     const orderUpdated = await OrderRepository.updateStatus(id, status);

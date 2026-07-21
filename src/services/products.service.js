@@ -1,19 +1,18 @@
+const { default: mongoose } = require("mongoose");
 const AppError = require("../errors/AppError");
 const { ERROR_CODES } = require("../errors/error-codes");
 const ProductRepository = require("../repositories/products.repository");
 const { PROD_STATES } = require("./../constants/index");
+const validateFields = require("../utils/validateFields");
 
 class ProductService {
   static async create({ name, price, stock, status }) {
-    if (!name || !price || !stock || !status) {
-      throw new AppError(400, "Faltan datos obligatorios del producto");
-    }
+    const requiredFields = ["name", "price", "stock", "status"];
+
+    validateFields({ name, price, stock, status }, requiredFields);
 
     if (!PROD_STATES[status.toUpperCase()]) {
-      throw new AppError(
-        404,
-        `valor de status fuera de rango, debe ser ${Object.values(PROD_STATES).join(" o ")}`,
-      );
+      throw new AppError(ERROR_CODES.INVALID_PRODUCT_STATE);
     }
 
     const product = await ProductRepository.create({
@@ -37,18 +36,14 @@ class ProductService {
   }
 
   static async getOne({ id }) {
-    if (!id)
-      throw new AppError(
-        ERROR_CODES.VALIDATION_ERROR,
-        "no ingresaste ningun id",
-      );
-    const product = await ProductRepository.getOne({ id: id });
+    if (!id) throw new AppError(ERROR_CODES.MISSING_OBJECT_ID);
 
-    if (!product)
-      throw new AppError(
-        ERROR_CODES.PRODUCT_NOT_FOUND,
-        "no se encontro ningun producto",
-      );
+    if (!mongoose.isValidObjectId(id))
+      throw new AppError(ERROR_CODES.INVALID_OBJECT_ID);
+
+    const product = await ProductRepository.getOne({ id });
+
+    if (!product) throw new AppError(ERROR_CODES.PRODUCT_NOT_FOUND);
 
     return product;
   }

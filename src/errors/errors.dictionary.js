@@ -53,4 +53,20 @@ exports.errorsDictionary = {
     statusCode: 400,
     message: "Debes ingresar un mockResults valido (numero)",
   },
+  [ERROR_CODES.MISSING_REQUIRED_FIELDS]: {
+    statusCode: 400,
+    message: "faltan campos requeridos para poder procesar la solicitud",
+  },
+  [ERROR_CODES.INVALID_OBJECT_ID]: {
+    statusCode: 400,
+    message: "El id ingresado no es valido",
+  },
+  [ERROR_CODES.MISSING_OBJECT_ID]: {
+    statusCode: 400,
+    message: "Debes ingresar un id",
+  },
+  [ERROR_CODES.INVALID_PRODUCT_STATE]: {
+    statusCode: 400,
+    message: "el estado ingresado para el producto es invalido",
+  },
 };

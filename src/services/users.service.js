@@ -1,15 +1,14 @@
 const { ERROR_CODES } = require("../errors/error-codes");
 const UserRepository = require("../repositories/users.repository");
+const mongoose = require("mongoose");
 const { USER_ROLES } = require("./../constants/index");
 const AppError = require("./../errors/AppError");
+const validateFields = require("../utils/validateFields");
 class UserService {
   static async create({ name, email, role = USER_ROLES.USER }) {
-    if (!name || !email) {
-      throw new AppError(
-        ERROR_CODES.VALIDATION_ERROR,
-        "Faltan datos obligatorios del usuario",
-      );
-    }
+    const requiredFields = ["name", "email", "role"];
+
+    validateFields({ name, email, role }, requiredFields);
 
     //validar rol si es correcto
     if (!Object.values(USER_ROLES).includes(role)) {
@@ -31,17 +30,14 @@ class UserService {
     return users;
   }
   static async getOne({ id }) {
-    if (!id)
-      throw new AppError(
-        ERROR_CODES.VALIDATION_ERROR,
-        "no ingresaste ningun id",
-      );
+    if (!id) throw new AppError(ERROR_CODES.MISSING_OBJECT_ID);
+
+    if (!mongoose.isValidObjectId(id)) {
+      throw new AppError(ERROR_CODES.INVALID_OBJECT_ID);
+    }
+
     const user = await UserRepository.getOne({ id });
-    if (!user)
-      throw new AppError(
-        ERROR_CODES.USER_NOT_FOUND,
-        "no se encontro el usuario con ese id",
-      );
+    if (!user) throw new AppError(ERROR_CODES.USER_NOT_FOUND);
     return user;
   }
   static async getRandom() {

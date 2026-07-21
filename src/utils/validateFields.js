@@ -1,3 +1,4 @@
+const { ERROR_CODES } = require("../errors/error-codes");
 const AppError = require("./../errors/AppError");
 
 function validateFields(data, requiredFields) {
@@ -7,7 +8,8 @@ function validateFields(data, requiredFields) {
   );
   if (missingFields.length > 0) {
     throw new AppError(
-      `faltan los siguientes campos ${missingFields.join(", ")}`,
+      ERROR_CODES.MISSING_REQUIRED_FIELDS,
+      `faltan los siguientes campos: ${missingFields.join(", ")}`,
     );
   }
 }
