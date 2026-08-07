@@ -213,3 +213,30 @@ if(!req.body)
 ```
 
 si el error que se quiere arrojar no se encuentra dentro de ERROR_CODES debe agregarse y luego agregarlo a errors-dictionary, la funcion AppError siempre debe llamarse de esta forma y con estos parametros para que la centralizacion y manejo de errores funcione de forma correcta y mantenga la consistencia a lo largo de todo el codigo
+
+## logger de errores
+
+para el loggin de errores se utilizan las liberias winston y winston-daily-rotate-file, los niveles de log son:
+
+```bash
+const loggerLevels =
+{
+  fatal: 0,
+  error: 1,
+  warning: 2,
+  info: 3,
+  http: 4,
+  debug: 5,
+};
+```
+
+para probar el correcto funcionamiento del modulo de loggin si se iniciar el servidor con `NODE_ENV = development` se realiza una peticion get al endpoint `/api/error` y la consola debe devolver un log de cada uno de los niveles:
+
+```bash
+DD-MM-YYYY HH:mm:ss [info]: Mensaje de prueba de info
+DD-MM-YYYY HH:mm:ss [warning]: Mensaje de prueba de warning
+DD-MM-YYYY HH:mm:ss [error]: Mensaje de prueba de error
+DD-MM-YYYY HH:mm:ss [fatal]: Mensaje de prueba de fatal
+```
+
+Ademas de guardar un log para los errores de tipo `error` y `fatal` no se subiran al repositorio ningun archivo .log ni ningun archivo que este dentro de la carpeta /log

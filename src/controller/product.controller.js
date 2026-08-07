@@ -1,3 +1,4 @@
+const logger = require("../config/logger");
 const ProductService = require("../services/products.service");
 const asyncHandler = require("../utils/asyncHandler");
 const responseFormat = require("../utils/responseFormat");
@@ -5,7 +6,7 @@ const responseFormat = require("../utils/responseFormat");
 exports.create = asyncHandler(async (req, res, next) => {
   const product = await ProductService.create(req.body);
 
-  console.log("producto creado:", product._id);
+  logger.info(`producto creado: ${product._id}`);
   responseFormat(req, res, 201, product);
 });
 

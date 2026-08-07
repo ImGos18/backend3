@@ -1,11 +1,16 @@
+const AppError = require("../errors/AppError");
 const { ERROR_CODES } = require("../errors/error-codes");
 const config = require("../config/index");
+const logger = require("../config/logger");
+const e = require("express");
 
 exports.notFoundHandler = (req, res, next) => {
-  const error = new Error("La ruta solicitada no existe");
+  const error = new AppError("La ruta solicitada no existe");
   error.code = ERROR_CODES.ROUTE_NOT_FOUND;
   error.statusCode = 404;
   error.isOperational = true;
+
+  logger.warning(`Ruta no encontrada: ${req.originalUrl}`);
   next(error);
 };
 
@@ -18,6 +23,12 @@ exports.errorHandler = (error, req, res, next) => {
     error: errorCode,
     message: error.message || "ocurrio un error interno en el servidor",
   };
+
+  if (error instanceof AppError) {
+    logger.warning(error.message);
+  } else {
+    logger.error("error inesperado: ", error);
+  }
 
   if (config.NODE_ENV === "development" && error.details) {
     response.details = error.details;

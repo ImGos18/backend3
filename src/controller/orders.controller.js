@@ -1,3 +1,4 @@
+const logger = require("../config/logger");
 const asyncHandler = require("../utils/asyncHandler");
 const responseFormat = require("../utils/responseFormat");
 const OrderService = require("./../services/orders.service");
@@ -5,7 +6,8 @@ const OrderService = require("./../services/orders.service");
 exports.create = asyncHandler(async (req, res, next) => {
   const orderCreated = await OrderService.create(req.body);
 
-  console.log("orden creada con exito:", orderCreated);
+  logger.info(`orden creada con exito: ${orderCreated}`);
+
   responseFormat(req, res, 201, orderCreated);
 });
 exports.getOne = asyncHandler(async (req, res, next) => {

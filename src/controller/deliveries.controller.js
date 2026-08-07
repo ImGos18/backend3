@@ -1,3 +1,4 @@
+const logger = require("../config/logger");
 const DeliveriesService = require("../services/deliveries.service");
 const asyncHandler = require("../utils/asyncHandler");
 const responseFormat = require("../utils/responseFormat");
@@ -5,7 +6,8 @@ const responseFormat = require("../utils/responseFormat");
 exports.create = asyncHandler(async (req, res, next) => {
   const delivery = await DeliveriesService.create(req.body);
 
-  console.log("Delivery creada:", delivery._id);
+  logger.info(`Delivery creada: ${delivery._id}`);
+
   responseFormat(req, res, 200, delivery);
 });
 exports.getAll = asyncHandler(async (req, res, next) => {
@@ -19,6 +21,6 @@ exports.getOne = asyncHandler(async (req, res, next) => {
 exports.updateStatus = asyncHandler(async (req, res, next) => {
   const delivery = await DeliveriesService.updateStatus(req.params, req.body);
 
-  console.log("Delivery actualizada:", delivery._id, "->", delivery.status);
+  logger.info(`Delivery actualizada: ${delivery._id} -> ${delivery.status}`);
   responseFormat(req, res, 200, delivery);
 });

@@ -1,3 +1,4 @@
+const logger = require("../config/logger");
 const AppError = require("../errors/AppError");
 const { ERROR_CODES } = require("../errors/error-codes");
 const CourierService = require("./../services/couriers.service");
@@ -8,6 +9,8 @@ exports.create = asyncHandler(async (req, res, next) => {
   const courier = await CourierService.create(req.body);
 
   console.log("courier creado:", courier._id);
+
+  logger.info(`courier creado: ${courier._id}`);
 
   responseFormat(req, res, 201, courier);
 });
