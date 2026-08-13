@@ -1,0 +1,138 @@
+paths:
+  /api/products:
+    get:
+      summary: obtiene todos los productos
+      tags:
+        - Products
+      responses:
+        "200":
+          description: productos obtenidos correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Product"
+        "404":
+          description: no se encontraron productos
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 404
+                      message:
+                        type: string
+                        example: no se encontro ningun producto
+    post:
+      summary: crea un nuevo producto
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "201":
+          description: producto creado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Product"
+        "400":
+          description: error al crear el producto
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 400
+                      message:
+                        type: string
+                        example: faltan campos requeridos para poder procesar la solicitud
+
+  /api/products/{id}:
+    get:
+      summary: obtiene un producto por ID
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: producto obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Product"
+        "400":
+          description: id ingresado no es valido
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 400
+                      message:
+                        type: string
+                        example: El id ingresado no es valido
+        "404":
+          description: no se encontró el producto con el ID proporcionado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 404
+                      message:
+                        type: string
+                        example: No se encontró el producto con el ID proporcionado.

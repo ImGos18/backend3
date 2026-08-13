@@ -1,0 +1,163 @@
+paths:
+  /api/deliveries:
+    get:
+      summary: obtiene todas las entregas
+      tags:
+        - Deliveries
+      responses:
+        "200":
+          description: entregas obtenidas correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Delivery"
+
+    post:
+      summary: crea una nueva entrega
+      tags:
+        - Deliveries
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Delivery"
+      responses:
+        "201":
+          description: entrega creada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Delivery"
+        "400":
+          description: error al crear la entrega
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 400
+                      message:
+                        type: string
+                        example: faltan campos requeridos para poder procesar la solicitud
+
+  /api/deliveries/{id}:
+    get:
+      summary: obtiene una entrega por ID
+      tags:
+        - Deliveries
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: entrega obtenida correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Delivery"
+        "404":
+          description: entrega no encontrada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 404
+                      message:
+                        type: string
+                        example: No se encontró la entrega con el ID proporcionado.
+
+  /api/deliveries/{id}/status:
+    patch:
+      summary: actualiza el estado de una entrega
+      tags:
+        - Deliveries
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: estado de la entrega actualizado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Delivery"
+        "404":
+          description: entrega no encontrada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 404
+                      message:
+                        type: string
+                        example: No se encontró la entrega con el ID proporcionado.
+        "400":
+          description: error al actualizar el estado de la entrega
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 400
+                      message:
+                        type: string
+                        example: El estado indicado no es valido para una entrega

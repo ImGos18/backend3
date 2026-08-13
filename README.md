@@ -242,3 +242,7 @@ DD-MM-YYYY HH:mm:ss [fatal]: Mensaje de prueba de fatal
 Ademas de guardar un log para los errores de tipo `error` y `fatal` no se subiran al repositorio ningun archivo .log ni ningun archivo que este dentro de la carpeta /log
 
 se puede probar que los logs esten funcionando correctamente si en development se ingresa al endpoint `/api/loggerTest`
+
+## Documentacion web
+
+para poder acceder a la documentacion web que se creo utilizando Swagger se puede ingresar al endpoint `/api/docs` donde se podra encontrar una documentacion interactiva de cada uno de los endpoints

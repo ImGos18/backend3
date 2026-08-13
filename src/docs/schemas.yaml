@@ -7,8 +7,8 @@ components:
           type: string
           example: error
         error:
-          type: string
-          example: ORDER_NOT_FOUND
+          type: integer
+          example: 404
         message:
           type: string
           example: No se encontró la orden con el ID proporcionado.
@@ -29,6 +29,7 @@ components:
       properties:
         _id:
           type: string
+          readOnly: true
           example: 665f4d0a8f9a1b001234abcd
         name:
           type: string
@@ -49,6 +50,7 @@ components:
       properties:
         _id:
           type: string
+          readOnly: true
           example: 665f4d0a8f9a1b001234abcd
         customer:
           type: string
@@ -56,7 +58,7 @@ components:
         items:
           type: array
           items:
-            $ref: "#/components/schemas/OrderItem"
+            $ref: "#/components/schemas/Product"
         deliveryAddress:
           type: string
           example: Calle Falsa 123, Ciudad, País
@@ -76,6 +78,7 @@ components:
       properties:
         _id:
           type: string
+          readOnly: true
           example: 12345
         name:
           type: string
@@ -92,6 +95,7 @@ components:
       properties:
         _id:
           type: string
+          readOnly: true
           example: 12345
         name:
           type: string
@@ -108,6 +112,7 @@ components:
       properties:
         _id:
           type: string
+          readOnly: true
           example: 12345
         orderId:
           type: string

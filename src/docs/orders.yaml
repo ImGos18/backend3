@@ -42,7 +42,7 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: "#/components/schemas/OrderItem"
+                    $ref: "#/components/schemas/Product"
                 deliveryAddress:
                   type: string
                   example: Calle Falsa 123, Ciudad, País
@@ -67,22 +67,46 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 400
+                      message:
+                        type: string
+                        example: "Faltan campos requeridos para poder procesar la solicitud."
         "404":
-          description: usuario no encontrado
+          description: usuario no encontrado para asignar el pedido
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 404
+                      message:
+                        type: string
+                        example: "No se encontró el usuario con el ID proporcionado. para asignar el pedido."
 
-  /api/orders/{orderId}:
+  /api/orders/{id}:
     get:
       summary: Obtener un pedido por ID
       description: Endpoint para obtener un pedido específico utilizando su ID.
       tags:
         - Orders
       parameters:
-        - name: orderId
+        - name: id
           in: path
           required: true
           schema:

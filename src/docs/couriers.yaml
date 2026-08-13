@@ -1,0 +1,121 @@
+paths:
+  /api/couriers:
+    get:
+      summary: obtiene todos los couriers
+      tags:
+        - Couriers
+      responses:
+        "200":
+          description: couriers obtenidos correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Courier"
+
+    post:
+      summary: crea un nuevo courier
+      tags:
+        - Couriers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Courier"
+      responses:
+        "201":
+          description: courier creado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Courier"
+        "400":
+          description: error al crear el courier
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 400
+                      message:
+                        type: string
+                        example: faltan campos requeridos para poder procesar la solicitud
+
+  /api/couriers/{id}:
+    get:
+      summary: obtiene un courier por su ID
+      tags:
+        - Couriers
+      parameters:
+        - name: courierId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: courier obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Courier"
+        "404":
+          description: courier no encontrado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 404
+                      message:
+                        type: string
+                        example: No se encontró el courier con el ID proporcionado.
+        "400":
+          description: el id ingresado no es un id valido
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 400
+                      message:
+                        type: string
+                        example: el id ingresado no es un id valido

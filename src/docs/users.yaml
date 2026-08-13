@@ -11,16 +11,133 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                      example: 12345
-                    name:
-                      type: string
-                      example: Juan Pérez
-                    email:
-                      type: string
-                      example: juan.perez@example.com
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/User"
+        "404":
+          description: No se encontraron usuarios
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 404
+                      message:
+                        type: string
+                        example: no se encontraton usuarios
+
+    post:
+      summary: Crear un nuevo usuario
+      description: Endpoint para crear un nuevo usuario en la base de datos.
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "201":
+          description: Usuario creado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/User"
+        "400":
+          description: Error al crear el usuario
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 400
+                      message:
+                        type: string
+                        example: faltan campos requeridos para poder procesar la solicitud
+
+  /api/users/{id}:
+    get:
+      summary: Obtener un usuario por ID
+      description: Endpoint para obtener un usuario específico por su ID.
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del usuario a obtener
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Usuario obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/User"
+        "404":
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 404
+                      message:
+                        type: string
+                        example: no se encontró el usuario con el ID proporcionado
+        "400":
+          description: ID de usuario inválido
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: error
+                      error:
+                        type: integer
+                        example: 400
+                      message:
+                        type: string
+                        example: El id ingresado no es valido
