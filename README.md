@@ -245,4 +245,13 @@ se puede probar que los logs esten funcionando correctamente si en development s
 
 ## Documentacion web
 
-para poder acceder a la documentacion web que se creo utilizando Swagger se puede ingresar al endpoint `/api/docs` donde se podra encontrar una documentacion interactiva de cada uno de los endpoints
+para poder acceder a la documentacion web que se creo utilizando Swagger se puede ingresar al endpoint `/api/docs` donde se podra encontrar una documentacion interactiva de cada uno de los endpoints, se documentaron los modulos:
+
+- couriers
+- deliveries
+- loggertest
+- mocks
+- orders
+- products
+- schemas
+- users
