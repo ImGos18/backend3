@@ -5,9 +5,11 @@
   "main": "src/index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "nodemon src/index.js",
-    "dev": "node src/index.js",
-    "seed": "node src/seed.js"
+    "server": "nodemon --ext js,json,yaml src/index.js",
+    "browser": "browser-sync start --proxy http://localhost:8080 --files \"src/docs/**/*.yaml\" --reload-delay 1000",
+    "dev": "concurrently \"npm run server\" \"npm run browser\"",
+    "seed": "node src/seed.js",
+    "start": "nodemon src/index.js"
   },
   "keywords": [
     "coderhouse",
@@ -22,10 +24,13 @@
     "dotenv": "^17.4.2",
     "express": "^4.19.2",
     "mongoose": "^8.4.0",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1",
     "winston": "^3.19.0",
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^10.5.0"
+    "@faker-js/faker": "^10.5.0",
+    "browser-sync": "^3.0.4"
   }
 }

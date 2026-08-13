@@ -1,0 +1,109 @@
+paths:
+  /api/orders:
+    get:
+      summary: Obtener todos los pedidos
+      description: Endpoint para obtener todos los pedidos registrados en la base de datos.
+      tags:
+        - Orders
+      responses:
+        "200":
+          description: Lista de pedidos obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                payload:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Order"
+    post:
+      summary: Crear un nuevo pedido
+      description: Endpoint para crear un nuevo pedido en la base de datos.
+      tags:
+        - Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - customer
+                - items
+                - deliveryAddress
+              properties:
+                customer:
+                  type: string
+                  example: 665f4d0a8f9a1b001234abce
+                items:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/OrderItem"
+                deliveryAddress:
+                  type: string
+                  example: Calle Falsa 123, Ciudad, País
+                priority:
+                  type: string
+                  example: normal
+      responses:
+        "201":
+          description: Pedido creado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  payload:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Error al crear el pedido (por ejemplo, datos inválidos)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/orders/{orderId}:
+    get:
+      summary: Obtener un pedido por ID
+      description: Endpoint para obtener un pedido específico utilizando su ID.
+      tags:
+        - Orders
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID del pedido a obtener
+      responses:
+        "200":
+          description: Pedido obtenido correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  payload:
+                    $ref: "#/components/schemas/Order"
+        "404":
+          description: Pedido no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"

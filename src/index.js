@@ -1,7 +1,10 @@
 const express = require("express");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpecs = require("./docs/swagger.config");
 const config = require("./config");
 const logger = require("./config/logger");
 const connectDB = require("./db");
+const healthCheck = require("./utils/healthCheck");
 
 const ordersRouter = require("./routes/orders");
 const usersRouter = require("./routes/users");
@@ -27,13 +30,13 @@ app.use("/api/deliveries", deliveriesRouter);
 
 // Ruta de health check basica.
 app.get("/", (req, res) => {
-  res.send("ShipNow API v1 - corriendo");
+  res.send(healthCheck);
 });
 if (config.NODE_ENV === "development") {
   const mocksRouter = require("./routes/mocks");
-  const errorRouter = require("./routes/error");
+  const loggerTest = require("./routes/loggerTest");
   app.use("/api/mocks", mocksRouter);
-  app.use("/api/error", errorRouter);
+  app.use("/api/loggerTest", loggerTest);
 }
 
 // Conectamos a la base y levantamos el server.
@@ -42,6 +45,6 @@ connectDB();
 app.listen(config.PORT, () => {
   logger.info("ShipNow escuchando en el puerto " + config.PORT);
 });
-
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 app.use(notFoundHandler);
 app.use(errorHandler);

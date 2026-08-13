@@ -1,0 +1,18 @@
+paths:
+  /api/loggerTest:
+    get:
+      summary: Probar niveles de logger
+      description: Endpoint para probar los niveles de logger. Devuelve un mensaje de éxito si el logger funciona correctamente.
+      tags:
+        - Logger
+      responses:
+        "200":
+          description: logs generados correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Prueba de logger completada

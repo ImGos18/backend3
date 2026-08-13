@@ -1,0 +1,26 @@
+paths:
+  /api/users:
+    get:
+      summary: Obtener todos los usuarios
+      description: Endpoint para obtener todos los usuarios registrados en la base de datos.
+      tags:
+        - Users
+      responses:
+        "200":
+          description: Lista de usuarios obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: 12345
+                    name:
+                      type: string
+                      example: Juan Pérez
+                    email:
+                      type: string
+                      example: juan.perez@example.com

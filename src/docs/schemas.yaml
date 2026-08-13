@@ -1,0 +1,124 @@
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        error:
+          type: string
+          example: ORDER_NOT_FOUND
+        message:
+          type: string
+          example: No se encontró la orden con el ID proporcionado.
+
+    successResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        results:
+          type: integer
+          example: 1
+        data: {}
+
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 665f4d0a8f9a1b001234abcd
+        name:
+          type: string
+          example: Producto 1
+        price:
+          type: number
+          format: float
+          example: 19.99
+        stock:
+          type: integer
+          example: 100
+        status:
+          type: string
+          example: available
+
+    Order:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 665f4d0a8f9a1b001234abcd
+        customer:
+          type: string
+          example: 665f4d0a8f9a1b001234abce
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+        deliveryAddress:
+          type: string
+          example: Calle Falsa 123, Ciudad, País
+        totalAmount:
+          type: number
+          format: float
+          example: 39.98
+        status:
+          type: string
+          example: pending
+        priority:
+          type: string
+          example: normal
+
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 12345
+        name:
+          type: string
+          example: Juan Pérez
+        email:
+          type: string
+          example: juan.perez@example.com
+        role:
+          type: string
+          example: customer
+
+    Courier:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 12345
+        name:
+          type: string
+          example: Carlos García
+        zone:
+          type: string
+          example: internacional
+        available:
+          type: boolean
+          example: true
+
+    Delivery:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 12345
+        orderId:
+          type: string
+          example: 665f4d0a8f9a1b001234abcd
+        courierId:
+          type: string
+          example: 12345
+        status:
+          type: string
+          example: in_transit
+        assignedAt:
+          type: string
+          format: date-time
+          example: 2023-10-01T12:00:00Z

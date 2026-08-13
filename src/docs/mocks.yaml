@@ -1,0 +1,430 @@
+paths:
+  /api/mocks/Users:
+    get:
+      summary: Generar usuarios mockeados
+      description: Endpoint para generar usuarios mockeados sin guardar en la base de datos.
+      tags:
+        - Mocks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mockResults
+              properties:
+                mockResults:
+                  type: integer
+                  example: 1
+      responses:
+        "201":
+          description: Lista de usuarios mockeada generada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/User"
+        "400":
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                - status: error
+                  error: 400
+                  message: "debes enviar mockResults con el numero de resultados esperado"
+    post:
+      summary: Crear usuarios mockeados
+      description: Endpoint para crear usuarios mockeados y guardarlos en la base de datos.
+      tags:
+        - Mocks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mockResults
+              properties:
+                mockResults:
+                  type: integer
+                  example: 1
+      responses:
+        "201":
+          description: Lista de usuarios mockeada generada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/User"
+        "400":
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                - status: error
+                  error: 400
+                  message: "debes enviar mockResults con el numero de resultados esperado"
+
+  /api/mocks/Orders:
+    get:
+      summary: Generar pedidos mockeados
+      description: Endpoint para generar pedidos mockeados sin guardar en la base de datos.
+      tags:
+        - Mocks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mockResults
+              properties:
+                mockResults:
+                  type: integer
+                  example: 1
+      responses:
+        "201":
+          description: Lista de pedidos mockeados generada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Order"
+        "400":
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                - status: error
+                  error: 400
+                  message: "debes enviar mockResults con el numero de resultados esperado"
+    post:
+      summary: Crear pedidos mockeados
+      description: Endpoint para crear pedidos mockeados y guardarlos en la base de datos.
+      tags:
+        - Mocks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mockResults
+              properties:
+                mockResults:
+                  type: integer
+                  example: 1
+      responses:
+        "201":
+          description: Lista de pedidos mockeados generada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Order"
+        "400":
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                - status: error
+                  error: 400
+                  message: "debes enviar mockResults con el numero de resultados esperado"
+
+  /api/mocks/Couriers:
+    get:
+      summary: Generar couriers mockeados
+      description: Endpoint para generar couriers mockeados sin guardar en la base de datos.
+      tags:
+        - Mocks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mockResults
+              properties:
+                mockResults:
+                  type: integer
+                  example: 1
+      responses:
+        "201":
+          description: Lista de couriers mockeados generada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Courier"
+        "400":
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                - status: error
+                  error: 400
+                  message: "debes enviar mockResults con el numero de resultados esperado"
+    post:
+      summary: Crear couriers mockeados
+      description: Endpoint para crear couriers mockeados y guardarlos en la base de datos.
+      tags:
+        - Mocks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mockResults
+              properties:
+                mockResults:
+                  type: integer
+                  example: 1
+      responses:
+        "201":
+          description: Lista de couriers  mockeados generada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Courier"
+        "400":
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                - status: error
+                  error: 400
+                  message: "debes enviar mockResults con el numero de resultados esperado"
+
+  /api/mocks/Products:
+    get:
+      summary: Generar productos mockeados
+      description: Endpoint para generar productos mockeados sin guardar en la base de datos.
+      tags:
+        - Mocks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mockResults
+              properties:
+                mockResults:
+                  type: integer
+                  example: 1
+      responses:
+        "201":
+          description: Lista de productos mockeados generada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Product"
+        "400":
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                - status: error
+                  error: 400
+                  message: "debes enviar mockResults con el numero de resultados esperado"
+    post:
+      summary: Crear productos mockeados
+      description: Endpoint para crear productos mockeados y guardarlos en la base de datos.
+      tags:
+        - Mocks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mockResults
+              properties:
+                mockResults:
+                  type: integer
+                  example: 1
+      responses:
+        "201":
+          description: Lista de productos mockeados generada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Product"
+        "400":
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                - status: error
+                  error: 400
+                  message: "debes enviar mockResults con el numero de resultados esperado"
+
+  /api/mocks/Deliveries:
+    get:
+      summary: Generar entregas mockeadas
+      description: Endpoint para generar entregas mockeadas sin guardar en la base de datos.
+      tags:
+        - Mocks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mockResults
+              properties:
+                mockResults:
+                  type: integer
+                  example: 1
+      responses:
+        "201":
+          description: Lista de entregas mockeadas generada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Delivery"
+        "400":
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                - status: error
+                  error: 400
+                  message: "debes enviar mockResults con el numero de resultados esperado"
+    post:
+      summary: Crear entregas mockeadas
+      description: Endpoint para crear entregas mockeadas y guardarlas en la base de datos.
+      tags:
+        - Mocks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mockResults
+              properties:
+                mockResults:
+                  type: integer
+                  example: 1
+      responses:
+        "201":
+          description: Lista de entregas mockeadas generada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Delivery"
+        "400":
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                - status: error
+                  error: 400
+                  message: "debes enviar mockResults con el numero de resultados esperado"
