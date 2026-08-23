@@ -255,3 +255,7 @@ para poder acceder a la documentacion web que se creo utilizando Swagger se pued
 - products
 - schemas
 - users
+
+# Entorno de puebas
+
+para realizar los test de de funcionamiento utilizar el comando `npm run test` y se ejecutaran todos los test que se encuentran en la carpeta `test`, los test se realizan utilizando mocha, chai y supertest
