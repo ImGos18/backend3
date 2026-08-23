@@ -131,3 +131,28 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+
+    patch:
+      summary: Actualizar un pedido
+      description: Actualiza el estado de un pedido segun el id
+      tags:
+        - Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: ID del pedido a actualizar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/successResponse"
+                - type: object
+                  properties:
+                    data:
+                      type: Object
+                      $ref: "#/components/schemas/Order"

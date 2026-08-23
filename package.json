@@ -2,14 +2,15 @@
   "name": "shipnow",
   "version": "1.0.0",
   "description": "API de logistica/envios ShipNow - baseline didactico (v1 sucio) para el curso Backend 3 de CoderHouse",
-  "main": "src/index.js",
+  "main": "src/app.js",
   "type": "commonjs",
   "scripts": {
-    "server": "nodemon --ext js,json,yaml src/index.js",
+    "server": "nodemon --ext js,json,yaml src/app.js",
     "browser": "browser-sync start --proxy http://localhost:8080 --files \"src/docs/**/*.yaml\" --reload-delay 1000",
     "dev": "concurrently \"npm run server\" \"npm run browser\"",
+    "test": "mocha src/tests/**/*.test.js --exit",
     "seed": "node src/seed.js",
-    "start": "nodemon src/index.js"
+    "start": "nodemon src/app.js"
   },
   "keywords": [
     "coderhouse",
@@ -21,9 +22,12 @@
   "author": "CoderHouse",
   "license": "ISC",
   "dependencies": {
+    "chai": "^6.2.2",
     "dotenv": "^17.4.2",
     "express": "^4.19.2",
+    "mocha": "^11.8.0",
     "mongoose": "^8.4.0",
+    "supertest": "^7.2.2",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1",
     "winston": "^3.19.0",
@@ -31,6 +35,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^10.5.0",
-    "browser-sync": "^3.0.4"
+    "browser-sync": "^3.0.4",
+    "concurrently": "^10.0.4"
   }
 }

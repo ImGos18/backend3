@@ -9,6 +9,7 @@ exports.notFoundHandler = (req, res, next) => {
   error.code = ERROR_CODES.ROUTE_NOT_FOUND;
   error.statusCode = 404;
   error.isOperational = true;
+  error.message = "la ruta no existe";
 
   logger.warning(`Ruta no encontrada: ${req.originalUrl}`);
   next(error);

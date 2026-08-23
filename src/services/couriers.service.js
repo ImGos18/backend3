@@ -49,6 +49,10 @@ class CourierService {
 
     const courier = await CourierRepository.getOne({ id });
 
+    if (!courier) {
+      throw new AppError(ERROR_CODES.COURIER_NOT_FOUND);
+    }
+
     return courier;
   }
   static async getRandom() {

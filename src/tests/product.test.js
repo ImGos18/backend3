@@ -1,0 +1,71 @@
+const app = require("./../app.js");
+const ProductModel = require("./../models/product");
+const request = require("supertest");
+const fillProductData = require("./../../mocks/productsMock");
+const { expect } = require("chai");
+const logger = require("../config/logger.js");
+
+describe("Product API", () => {
+  it("deberia crear un producto", async () => {
+    const productData = fillProductData();
+    const response = await request(app).post("/api/products").send(productData);
+    expect(response.status).to.equal(201);
+    expect(response.body).to.have.property("data");
+    expect(response.body.data).to.have.property("name", productData.name);
+    expect(response.body.data).to.have.property("price", productData.price);
+    expect(response.body.data).to.have.property("stock", productData.stock);
+    await ProductModel.findByIdAndDelete(response.body.data._id);
+
+    logger.info(
+      `se elimino correctamente el producto ${response.body.data._id} de la base de datos despues de la prueba de crear producto`,
+    );
+  });
+
+  it("deberia devolver un error si faltan campos al crear el producto", async () => {
+    const productData = fillProductData();
+    productData.name = undefined;
+    productData.price = undefined;
+    const response = await request(app).post("/api/products").send(productData);
+    expect(response.status).to.equal(400);
+
+    expect(response.body).to.have.property("status", "error");
+    expect(response.body).to.have.property("error", "MISSING_REQUIRED_FIELDS");
+  });
+
+  it("deberia devolver todos los productos", async () => {
+    const response = await request(app).get("/api/products");
+    expect(response.status).to.equal(200);
+    expect(response.body).to.have.property("status", "sucess");
+    expect(response.body).to.have.property("results");
+    expect(response.body).to.have.property("data");
+    expect(response.body.data).to.be.an("array");
+  });
+
+  it("deberia devolver un solo producto por ID", async () => {
+    const product = await ProductModel.create(fillProductData());
+    const response = await request(app).get(`/api/products/${product._id}`);
+    expect(response.status).to.equal(200);
+    expect(response.body).to.have.property("status", "sucess");
+
+    await ProductModel.findByIdAndDelete(product._id);
+    logger.info(
+      `se ha eliminado correctamente el producto ${product._id} despues de hacer las pruebas de obtener por ID `,
+    );
+  });
+
+  it("deberia devolver error si el id ingresado no es valido", async () => {
+    const response = await request(app).get("/api/products/invalidId");
+    expect(response.status).to.equal(400);
+    expect(response.body).to.have.property("status", "error");
+    expect(response.body).to.have.property("error", "INVALID_OBJECT_ID");
+  });
+
+  it("deberia devolver un error si no se encuentra el producto", async () => {
+    const response = await request(app).get(
+      "/api/products/63c9b8e5e5e5e5e5e5e5e5e5",
+    );
+    expect(response.status).to.equal(404);
+    expect(response.body).to.have.property("status", "error");
+    expect(response.body).to.have.property("error", "PRODUCT_NOT_FOUND");
+  });
+});

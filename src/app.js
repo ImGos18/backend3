@@ -1,10 +1,10 @@
 const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpecs = require("./docs/swagger.config");
-const config = require("./config");
+const config = require("./config/index");
 const logger = require("./config/logger");
 const connectDB = require("./db");
-const healthCheck = require("./utils/healthCheck");
+const healthCheckHTML = require("./utils/healthCheck");
 
 const ordersRouter = require("./routes/orders");
 const usersRouter = require("./routes/users");
@@ -30,7 +30,11 @@ app.use("/api/deliveries", deliveriesRouter);
 
 // Ruta de health check basica.
 app.get("/", (req, res) => {
-  res.send(healthCheck);
+  const responseJSON = {
+    status: "up",
+    message: "shipNow corriendo correctamente",
+  };
+  res.status(200).json(responseJSON);
 });
 if (config.NODE_ENV === "development") {
   const mocksRouter = require("./routes/mocks");
@@ -48,3 +52,5 @@ app.listen(config.PORT, () => {
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 app.use(notFoundHandler);
 app.use(errorHandler);
+
+module.exports = app;

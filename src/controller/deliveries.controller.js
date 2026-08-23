@@ -8,7 +8,7 @@ exports.create = asyncHandler(async (req, res, next) => {
 
   logger.info(`Delivery creada: ${delivery._id}`);
 
-  responseFormat(req, res, 200, delivery);
+  responseFormat(req, res, 201, delivery);
 });
 exports.getAll = asyncHandler(async (req, res, next) => {
   const deliveries = await DeliveriesService.getAll();

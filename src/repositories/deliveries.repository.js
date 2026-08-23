@@ -15,9 +15,13 @@ class DeliveriesRepository {
     return delivery;
   }
   static async updateStatus({ id, status }) {
-    const deliveryUpdated = await Delivery.findByIdAndUpdate(id, {
-      status: status,
-    });
+    const deliveryUpdated = await Delivery.findByIdAndUpdate(
+      id,
+      {
+        status: status,
+      },
+      { new: true },
+    );
 
     return deliveryUpdated;
   }

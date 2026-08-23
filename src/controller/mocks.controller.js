@@ -15,6 +15,9 @@ const AppError = require("../errors/AppError");
 const { ERROR_CODES } = require("../errors/error-codes");
 
 class MockController {
+  /**
+   * @type {Middleware}
+   */
   static async mockUsers(req, res) {
     const { mockResults } = req.body;
 
@@ -41,6 +44,9 @@ class MockController {
     res.status(201).json({ status: "ok", results: users.length, users });
   }
 
+  /**
+   * @type {Middleware}
+   */
   static async mockProducts(req, res) {
     const { mockResults } = req.body;
 
@@ -70,6 +76,9 @@ class MockController {
     });
   }
 
+  /**
+   * @type {Middleware}
+   */
   static async mockCouriers(req, res) {
     const { mockResults } = req.body;
 
@@ -100,6 +109,9 @@ class MockController {
     });
   }
 
+  /**
+   * @type {Middleware}
+   */
   static async mockOrders(req, res) {
     const { mockResults } = req.body;
 
@@ -125,6 +137,9 @@ class MockController {
 
     res.status(200).json({ orders });
   }
+  /**
+   * @type {Middleware}
+   */
   static async mockDeliveries(req, res) {
     const { mockResults } = req.body;
 

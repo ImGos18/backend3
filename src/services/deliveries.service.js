@@ -9,12 +9,12 @@ const { default: mongoose } = require("mongoose");
 
 class DeliveriesService {
   static async create(data) {
-    const requiredFields = ["orderId", "courierId", "status"];
+    const requiredFields = ["orderId", "courierId"];
     validateFields(data, requiredFields);
 
     const { orderId, courierId, status } = data;
 
-    if (!TRACKING_STATES[status.toUpperCase()]) {
+    if (status && !TRACKING_STATES[status.toUpperCase()]) {
       throw new AppError(ERROR_CODES.INVALID_DELIVERY_STATUS);
     }
 
