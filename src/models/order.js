@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const documentSchema = require("../schemas/documents");
 
 // Modelo de Order (envio/pedido).
 const orderSchema = new mongoose.Schema({
@@ -17,6 +18,10 @@ const orderSchema = new mongoose.Schema({
     },
   ],
   courierId: { type: mongoose.Schema.Types.ObjectId, ref: "Courier" },
+  proof: {
+    type: documentSchema,
+    default: undefined,
+  },
 });
 
 module.exports = mongoose.model("Order", orderSchema);

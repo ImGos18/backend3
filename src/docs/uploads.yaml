@@ -1,0 +1,28 @@
+paths:
+  /users/{id}/documents:
+    post:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: ID del usuario.
+      summary: Subir documentos de usuario
+      tags:
+        - Documents
+      description: Endpoint para subir documentos de usuario.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                document:
+                  type: string
+                  format: binary
+                type:
+                  type: string
+                  example: user_document

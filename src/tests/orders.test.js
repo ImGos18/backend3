@@ -1,7 +1,10 @@
 const app = require("./../app");
 const UserModel = require("./../models/user");
 const OrderModel = require("./../models/order");
+const CourierModel = require("./../models/courier");
 const { USER_ROLES } = require("./../constants/index");
+const fillCourierData = require("./../../mocks/couriersMock");
+const mongoose = require("mongoose");
 
 const request = require("supertest");
 const { expect } = require("chai");
@@ -25,6 +28,9 @@ describe("Orders API", () => {
       email: `test-${Math.random() * 1000}@test.com`,
       role: USER_ROLES.CUSTOMER,
     });
+    const courier = await CourierModel.create(fillCourierData());
+    trackTestDocument(UserModel, user._id);
+    trackTestDocument(CourierModel, courier._id);
 
     const response = await request(app)
       .post("/api/orders")
@@ -35,8 +41,9 @@ describe("Orders API", () => {
         weight: 5,
         priority: "normal",
         items: [{ name: "Caja chica", quantity: 2, price: 100 }],
-        courierId: "6a5109685f77fee3c1b0bda8",
+        courierId: courier._id,
       });
+    trackTestDocument(OrderModel, response.body.data?._id);
 
     expect(response.status).to.equal(201);
     expect(response.body.status).to.equal("sucess");
@@ -44,9 +51,6 @@ describe("Orders API", () => {
     expect(response.body.results).to.equal(1);
     expect(response.body).to.have.property("data");
     expect(response.body.data).to.have.property("_id");
-
-    await UserModel.findByIdAndDelete(user._id);
-    await OrderModel.findByIdAndDelete(response.body.data._id);
   });
 
   it("deberia devolver un error si falta algun campo requerido", async () => {
@@ -55,6 +59,7 @@ describe("Orders API", () => {
       email: `test-${Math.random() * 1000}@test.com`,
       role: USER_ROLES.CUSTOMER,
     });
+    trackTestDocument(UserModel, user._id);
 
     const response = await request(app).post("/api/orders").send({
       customer: user._id.toString(),
@@ -67,13 +72,11 @@ describe("Orders API", () => {
     expect(response.body).to.have.property("error");
     expect(response.body.error).to.equal("MISSING_REQUIRED_FIELDS");
     expect(response.body).to.have.property("message");
-
-    await UserModel.findByIdAndDelete(user._id);
   });
 
   it("deberia responder con un error si no encuentra la orden", async () => {
     const response = await request(app).get(
-      "/api/orders/6a510a52f572b727993cb7d2",
+      `/api/orders/${new mongoose.Types.ObjectId()}`,
     );
 
     expect(response.status).to.equal(404);

@@ -1,20 +1,31 @@
 const dotenv = require("dotenv");
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
+const NODE_ENV = process.env.NODE_ENV || "development";
+const TEST_DEFAULTS = {
+  PORT: "0",
+  SECRET: "test_secret",
+  MONGO_URI: "mongodb://127.0.0.1:27017/shipnow_test",
+};
 const REQUIRES_ENV_VARS = ["PORT", "SECRET", "MONGO_URI", "NODE_ENV"];
 
+const environment = {
+  PORT:
+    process.env.PORT || (NODE_ENV === "test" ? TEST_DEFAULTS.PORT : undefined),
+  SECRET:
+    process.env.SECRET || (NODE_ENV === "test" ? TEST_DEFAULTS.SECRET : undefined),
+  MONGO_URI:
+    process.env.MONGO_TEST_URI ||
+    process.env.MONGO_URI ||
+    (NODE_ENV === "test" ? TEST_DEFAULTS.MONGO_URI : undefined),
+  NODE_ENV,
+};
+
 for (const key of REQUIRES_ENV_VARS) {
-  if (!process.env[key]) {
+  if (!environment[key]) {
     throw new Error(`Missing required environment variable: ${key}`);
   }
 }
 
-const config = {
-  PORT: process.env.PORT,
-  SECRET: process.env.SECRET,
-  MONGO_URI: process.env.MONGO_URI,
-  NODE_ENV: process.env.NODE_ENV,
-};
-
-module.exports = config;
+module.exports = environment;

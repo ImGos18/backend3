@@ -3,21 +3,26 @@ const { expect } = require("chai");
 const app = require("../app");
 const CourierModel = require("../models/courier");
 const fillCourierData = require("./../../mocks/couriersMock");
-const logger = require("../config/logger");
+const mongoose = require("mongoose");
 
 describe("Couriers API", () => {
+  let existingCourier;
+
+  beforeEach(async () => {
+    existingCourier = await CourierModel.create(fillCourierData());
+    trackTestDocument(CourierModel, existingCourier._id);
+  });
+
   it("deberia crear un nuevo courier", async () => {
     const courierData = fillCourierData();
     const response = await request(app).post("/api/couriers").send(courierData);
+    trackTestDocument(CourierModel, response.body.data?._id);
+
     expect(response.status).to.equal(201);
     expect(response.body).to.have.property("status", "sucess");
     expect(response.body).to.have.property("data");
     expect(response.body.data).to.have.property("name", courierData.name);
     expect(response.body.data).to.have.property("zone", courierData.zone);
-    await CourierModel.findByIdAndDelete(response.body.data._id);
-    logger.info(
-      `se elimino correctamente el courier ${response.body.data._id} despues de la prueba de crear courier`,
-    );
   });
 
   it("deberia devolver un error si faltan campos requeridos al crear courier", async () => {
@@ -37,18 +42,16 @@ describe("Couriers API", () => {
   });
 
   it("deberia devolver un courier por id", async () => {
-    const courierData = fillCourierData();
-    const courier = await CourierModel.create(courierData);
-    const response = await request(app).get(`/api/couriers/${courier._id}`);
+    const response = await request(app).get(
+      `/api/couriers/${existingCourier._id}`,
+    );
     expect(response.status).to.equal(200);
     expect(response.body).to.have.property("status", "sucess");
     expect(response.body).to.have.property("data");
     expect(response.body.data).to.be.an("object");
-    expect(response.body.data).to.have.property("_id", courier._id.toString());
-
-    await CourierModel.findByIdAndDelete(courier._id);
-    logger.info(
-      `se elimino el courier ${courier._id} despues de la prueba de busqueda por id`,
+    expect(response.body.data).to.have.property(
+      "_id",
+      existingCourier._id.toString(),
     );
   });
 
@@ -61,7 +64,7 @@ describe("Couriers API", () => {
 
   it("deberia devolver un error si no se encuentra el courier con el id Proporcionado", async () => {
     const response = await request(app).get(
-      "/api/couriers/64b8e5f6e5f6e5f6e5f6e5f6",
+      `/api/couriers/${new mongoose.Types.ObjectId()}`,
     );
 
     expect(response.status).to.equal(404);

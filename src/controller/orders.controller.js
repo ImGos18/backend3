@@ -25,3 +25,11 @@ exports.updateStatus = asyncHandler(async (req, res, next) => {
   const orderUpdated = await OrderService.updateStatus(req.params, req.body);
   responseFormat(req, res, 200, orderUpdated);
 });
+
+exports.uploadOrderProof = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const file = req.file;
+  const updatedOrder = await OrderService.addProof(id, file);
+
+  responseFormat(req, res, 200, updatedOrder);
+});

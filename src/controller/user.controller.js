@@ -1,7 +1,5 @@
 const logger = require("../config/logger");
-const user = require("../models/user");
 const UserService = require("../services/users.service");
-const fillUserData = require("./../../mocks/userMocks");
 const asyncHandler = require("./../utils/asyncHandler");
 const responseFormat = require("./../utils/responseFormat");
 
@@ -16,7 +14,15 @@ exports.getAll = asyncHandler(async (req, res, next) => {
   responseFormat(req, res, 200, users);
 });
 
-exports.getOne = asyncHandler(async (req, res, nex) => {
+exports.getOne = asyncHandler(async (req, res, next) => {
   const user = await UserService.getOne(req.params);
   responseFormat(req, res, 200, user);
+});
+
+exports.uploadUserDocument = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { type } = req.body;
+  const updatedUser = await UserService.addDocument(id, req.file, type);
+
+  responseFormat(req, res, 200, updatedUser);
 });

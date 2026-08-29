@@ -24,6 +24,12 @@ class CourierRepository {
 
     return CouriersRandom;
   }
+  static async update(id, data) {
+    const courierUpdated = await Courier.findByIdAndUpdate(id, data, {
+      new: true,
+    });
+    return courierUpdated;
+  }
 }
 
 module.exports = CourierRepository;

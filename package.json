@@ -5,12 +5,12 @@
   "main": "src/app.js",
   "type": "commonjs",
   "scripts": {
-    "server": "nodemon --ext js,json,yaml src/app.js",
+    "server": "nodemon --ext js,json,yaml src/server.js",
     "browser": "browser-sync start --proxy http://localhost:8080 --files \"src/docs/**/*.yaml\" --reload-delay 1000",
     "dev": "concurrently \"npm run server\" \"npm run browser\"",
-    "test": "mocha src/tests/**/*.test.js --exit",
+    "test": "mocha --require src/tests/setup.js src/tests/**/*.test.js --timeout 10000",
     "seed": "node src/seed.js",
-    "start": "nodemon src/app.js"
+    "start": "node src/server.js"
   },
   "keywords": [
     "coderhouse",
@@ -27,6 +27,7 @@
     "express": "^4.19.2",
     "mocha": "^11.8.0",
     "mongoose": "^8.4.0",
+    "multer": "^2.2.0",
     "supertest": "^7.2.2",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1",

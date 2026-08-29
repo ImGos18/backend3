@@ -1,6 +1,6 @@
 const OrderRepository = require("./../repositories/orders.repository");
 const validateFields = require("./../utils/validateFields");
-const { ORDER_STATUS } = require("./../constants/index");
+const { ORDER_STATUS, DOCUMENT_TYPES } = require("./../constants/index");
 const AppError = require("../errors/AppError");
 const { ERROR_CODES } = require("./../errors/error-codes");
 const { default: mongoose, mongo } = require("mongoose");
@@ -91,6 +91,26 @@ class OrderService {
   static async getRandom() {
     const randomOrder = await OrderRepository.getRandom();
     return randomOrder;
+  }
+
+  static async addProof(id, file) {
+    if (!file) {
+      throw new AppError(ERROR_CODES.FILE_REQUIRED);
+    }
+    const order = await OrderRepository.getOne(id);
+    if (!order) {
+      throw new AppError(ERROR_CODES.ORDER_NOT_FOUND);
+    }
+    const proof = {
+      originalName: file.originalname,
+      fileName: file.filename,
+      path: file.path,
+      mimeType: file.mimetype,
+      size: file.size,
+      type: DOCUMENT_TYPES.DELIVERY_PROOF,
+      uploadedAt: new Date(),
+    };
+    return OrderRepository.update(id, { proof });
   }
 }
 

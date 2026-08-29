@@ -2,7 +2,6 @@ const AppError = require("../errors/AppError");
 const { ERROR_CODES } = require("../errors/error-codes");
 const config = require("../config/index");
 const logger = require("../config/logger");
-const e = require("express");
 
 exports.notFoundHandler = (req, res, next) => {
   const error = new AppError("La ruta solicitada no existe");
@@ -34,6 +33,5 @@ exports.errorHandler = (error, req, res, next) => {
   if (config.NODE_ENV === "development" && error.details) {
     response.details = error.details;
   }
-
   res.status(statusCode).json(response);
 };

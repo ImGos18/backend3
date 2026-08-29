@@ -20,7 +20,7 @@ Al consultar una entrega por id (`GET /api/deliveries/:id`) se llama inline a un
 
 ## Como correrlo
 
-Requisitos: Node.js y una instancia de MongoDB corriendo en `localhost:27017`.
+Requisitos: Node.js 18 o superior y una instancia de MongoDB.
 
 Para levantar MongoDB rapido con Docker:
 
@@ -28,17 +28,21 @@ Para levantar MongoDB rapido con Docker:
 docker run -d -p 27017:27017 --name shipnow-mongo mongo
 ```
 
-Tambien sirve una instalacion local de MongoDB o un cluster de MongoDB Atlas
-(en ese caso ajusta la URI hardcodeada en `src/db.js` y `src/seed.js`).
+Tambien sirve una instalacion local de MongoDB o un cluster de MongoDB Atlas.
+La conexion se configura mediante variables de entorno; no hay que modificar el
+codigo fuente.
 
 ```bash
 # 1. Instalar dependencias
 npm install
 
-# 2. (Opcional) Cargar datos de ejemplo relacionados
+# 2. Crear el archivo de entorno y completar sus valores
+cp .env.example .env
+
+# 3. (Opcional) Cargar datos de ejemplo relacionados
 npm run seed
 
-# 3. Levantar el servidor
+# 4. Levantar el servidor
 npm start
 # o
 npm run dev
@@ -46,28 +50,67 @@ npm run dev
 
 El servidor queda escuchando en `http://localhost:8080`.
 
+### Variables de entorno
+
+El archivo [`.env.example`](./.env.example) documenta todas las variables. El
+servidor valida las variables obligatorias al arrancar, mientras que el entorno
+`test` utiliza valores seguros por defecto para `PORT` y `SECRET`.
+
+| Variable         | Requerida en desarrollo | Uso |
+| ---------------- | ----------------------- | --- |
+| `PORT`           | Si                      | Puerto HTTP del servidor. |
+| `SECRET`         | Si                      | Secreto de la aplicacion. No usar el valor de ejemplo en produccion. |
+| `MONGO_URI`      | Si                      | URI de MongoDB para desarrollo/produccion. |
+| `MONGO_TEST_URI` | No                      | URI exclusiva para tests; si se define, tiene prioridad sobre `MONGO_URI`. |
+| `NODE_ENV`       | Si                      | Entorno: `development`, `test` o `production`. |
+
+## Testing funcional
+
+La suite usa **Mocha** como runner, **Chai** para aserciones y **Supertest** para
+probar los endpoints de Express sin abrir un puerto HTTP. Cubre health check,
+usuarios, productos, couriers, ordenes, entregas, mocks, logger y cargas de
+archivos.
+
+```bash
+npm test
+```
+
+Los tests que acceden a datos requieren MongoDB. Se recomienda definir
+`MONGO_TEST_URI` con una base exclusiva, por ejemplo
+`mongodb://127.0.0.1:27017/shipnow_test`. Si no existe un `.env`, la suite usa
+esa URI local por defecto. Los hooks globales conectan antes de la suite,
+desconectan al finalizar y eliminan despues de cada caso solamente los
+documentos registrados por ese test.
+
+La aplicacion Express vive en `src/app.js`; la conexion a MongoDB y el
+`listen()` se ejecutan desde `src/server.js`. Esta separacion permite importar
+la app en Supertest sin iniciar el servidor ni conectarse dos veces.
+
 ### Endpoints
 
-| Metodo | Ruta                         | Descripcion                     |
-| ------ | ---------------------------- | ------------------------------- |
-| GET    | `/`                          | Health check basico             |
-| POST   | `/api/users`                 | Crear cliente                   |
-| GET    | `/api/users`                 | Listar clientes                 |
-| GET    | `/api/users/:id`             | Obtener cliente por id          |
-| POST   | `/api/products`              | Crear producto                  |
-| GET    | `/api/products`              | Listar productos                |
-| GET    | `/api/products/:id`          | Obtener producto por id         |
-| POST   | `/api/couriers`              | Crear repartidor                |
-| GET    | `/api/couriers`              | Listar repartidores             |
-| GET    | `/api/couriers/:id`          | Obtener repartidor por id       |
-| POST   | `/api/orders`                | Crear envio                     |
-| GET    | `/api/orders`                | Listar envios                   |
-| GET    | `/api/orders/:id`            | Obtener envio por id            |
-| PATCH  | `/api/orders/:id/status`     | Cambiar estado de un envio      |
-| POST   | `/api/deliveries`            | Crear entrega (order + courier) |
-| GET    | `/api/deliveries`            | Listar entregas                 |
-| GET    | `/api/deliveries/:id`        | Obtener entrega + tracking      |
-| PATCH  | `/api/deliveries/:id/status` | Cambiar estado de una entrega   |
+| Metodo | Ruta                          | Descripcion                             |
+| ------ | ----------------------------- | --------------------------------------- |
+| GET    | `/`                           | Health check basico                     |
+| POST   | `/api/users`                  | Crear cliente                           |
+| GET    | `/api/users`                  | Listar clientes                         |
+| GET    | `/api/users/:id`              | Obtener cliente por id                  |
+| POST   | `/api/users/:id/documents`    | Subir un documento para un usuario      |
+| POST   | `/api/products`               | Crear producto                          |
+| GET    | `/api/products`               | Listar productos                        |
+| GET    | `/api/products/:id`           | Obtener producto por id                 |
+| POST   | `/api/couriers`               | Crear repartidor                        |
+| GET    | `/api/couriers`               | Listar repartidores                     |
+| GET    | `/api/couriers/:id`           | Obtener repartidor por id               |
+| POST   | `/api/couriers/:id/documents` | Subir un documento para un repetartidor |
+| POST   | `/api/orders`                 | Crear envio                             |
+| GET    | `/api/orders`                 | Listar envios                           |
+| GET    | `/api/orders/:id`             | Obtener envio por id                    |
+| PATCH  | `/api/orders/:id/status`      | Cambiar estado de un envio              |
+| POST   | `/api/orders/:id/proof`       | Subir un comprobante de entrega         |
+| POST   | `/api/deliveries`             | Crear entrega (order + courier)         |
+| GET    | `/api/deliveries`             | Listar entregas                         |
+| GET    | `/api/deliveries/:id`         | Obtener entrega + tracking              |
+| PATCH  | `/api/deliveries/:id/status`  | Cambiar estado de una entrega           |
 
 ### Endpoints para cargar datos de prueba (solo disponible en entorno development)
 

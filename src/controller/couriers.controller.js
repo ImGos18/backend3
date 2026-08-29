@@ -47,3 +47,19 @@ exports.getOne = asyncHandler(
     responseFormat(req, res, 200, courier);
   },
 );
+
+exports.uploadDocument = asyncHandler(
+  /**
+   *
+   * @type {Middleware}
+   */
+  async (req, res, next) => {
+    const { id } = req.params;
+    const { file } = req;
+
+    const updatedCourier = await CourierService.uploadDocument(id, file);
+
+    logger.info("se ha subido correctamente la licencia de conducir");
+    responseFormat(req, res, 200, updatedCourier);
+  },
+);

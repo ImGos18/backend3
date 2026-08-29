@@ -33,6 +33,13 @@ class OrderRepository {
 
     return order;
   }
+
+  static async update(id, data) {
+    const orderUpdated = await Order.findByIdAndUpdate(id, data, {
+      new: true,
+    });
+    return orderUpdated;
+  }
 }
 
 module.exports = OrderRepository;

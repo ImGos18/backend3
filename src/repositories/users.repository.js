@@ -26,6 +26,12 @@ class UserRepository {
 
     return usersRandom;
   }
+  static async update({ id }, updateObject) {
+    const userUpdated = await User.findByIdAndUpdate(id, updateObject, {
+      new: true,
+    });
+    return userUpdated;
+  }
 }
 
 module.exports = UserRepository;

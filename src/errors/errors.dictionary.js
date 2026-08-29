@@ -69,4 +69,25 @@ exports.errorsDictionary = {
     statusCode: 400,
     message: "el estado ingresado para el producto es invalido",
   },
+  [ERROR_CODES.INVALID_FILE_TYPE]: {
+    statusCode: 400,
+    message: "El tipo de archivo no es permitido",
+  },
+  [ERROR_CODES.FILE_REQUIRED]: {
+    statusCode: 400,
+    message: "debes proporcionar un archivo",
+  },
+
+  [ERROR_CODES.FILE_TOO_LARGE]: {
+    statusCode: 400,
+    message: "el archivo es demasiado grande, maximo 5MB",
+  },
+  [ERROR_CODES.INVALID_DOCUMENT_TYPE]: {
+    statusCode: 400,
+    message: "el archivo no es soportado",
+  },
+  [ERROR_CODES.UPLOAD_ERROR]: {
+    statusCode: 500,
+    message: "ocurrio un error en la carga del archivo",
+  },
 };

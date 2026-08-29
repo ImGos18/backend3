@@ -4,3 +4,5 @@ postman
 /logs
 *.log
 seed.js
+/uploads/*
+!/uploads/**/.gitkeep

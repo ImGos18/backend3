@@ -23,10 +23,18 @@ const DEV_TESTING_VALUES = {
   mockResults: 100,
 };
 
+const DOCUMENT_TYPES = {
+  USER_DOCUMENT: "user_document",
+  DRIVER_LICENSE: "driver_license",
+  DELIVERY_PROOF: "delivery_proof",
+};
+
 Object.freeze(PROD_STATES);
 Object.freeze(USER_ROLES);
 Object.freeze(ORDER_STATUS);
 Object.freeze(ORDER_PRIORITY);
+Object.freeze(DOCUMENT_TYPES);
+Object.freeze(TRACKING_STATES);
 
 module.exports = {
   USER_ROLES,
@@ -35,4 +43,5 @@ module.exports = {
   ORDER_PRIORITY,
   DEV_TESTING_VALUES,
   TRACKING_STATES,
+  DOCUMENT_TYPES,
 };
