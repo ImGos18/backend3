@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const OrderController = require("./../controller/orders.controller");
-const upload = require("./../middlewares/upload.middleware");
+const { uploadOrderProof } = require("../middlewares/upload.middleware");
 
 // POST /api/orders -> crea un envio
 router.post("/", OrderController.create);
@@ -18,7 +18,7 @@ router.patch("/:id/status", OrderController.updateStatus);
 //POST / api/deliveries/:id/proof -> sube pruebas de entrega
 router.post(
   "/:id/proof",
-  upload.single("proof"),
+  uploadOrderProof,
   OrderController.uploadOrderProof,
 );
 

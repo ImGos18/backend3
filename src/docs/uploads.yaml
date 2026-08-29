@@ -1,28 +1,207 @@
 paths:
-  /users/{id}/documents:
+  /api/users/{id}/documents:
     post:
+      summary: Subir un documento de usuario
+      description: Guarda el archivo en uploads/documents y registra sus metadatos en el usuario.
+      tags:
+        - Uploads
       parameters:
         - in: path
           name: id
           required: true
+          description: ID de MongoDB del usuario.
           schema:
             type: string
-            format: uuid
-            description: ID del usuario.
-      summary: Subir documentos de usuario
-      tags:
-        - Documents
-      description: Endpoint para subir documentos de usuario.
+            example: 665f4d0a8f9a1b001234abcd
       requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
               type: object
+              required:
+                - document
+                - type
               properties:
                 document:
                   type: string
                   format: binary
+                  description: PDF, JPEG, PNG, WEBP o TXT de hasta 5MB.
                 type:
                   type: string
-                  example: user_document
+                  enum:
+                    - user_document
+      responses:
+        "200":
+          description: Documento asociado correctamente.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/User"
+        "400":
+          description: Archivo faltante, campo incorrecto, MIME o tipo documental invalido.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Usuario no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "413":
+          description: El archivo supera el maximo de 5MB.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al almacenar el archivo o sus metadatos.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/couriers/{id}/documents:
+    post:
+      summary: Subir la licencia de un courier
+      description: Guarda el archivo en uploads/licenses y registra sus metadatos en el courier.
+      tags:
+        - Uploads
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID de MongoDB del courier.
+          schema:
+            type: string
+            example: 665f4d0a8f9a1b001234abcd
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - license
+                - type
+              properties:
+                license:
+                  type: string
+                  format: binary
+                  description: PDF, JPEG, PNG, WEBP o TXT de hasta 5MB.
+                type:
+                  type: string
+                  enum:
+                    - driver_license
+      responses:
+        "200":
+          description: Licencia asociada correctamente.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Courier"
+        "400":
+          description: Archivo faltante, campo incorrecto, MIME o tipo documental invalido.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Courier no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "413":
+          description: El archivo supera el maximo de 5MB.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al almacenar el archivo o sus metadatos.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/orders/{id}/proof:
+    post:
+      summary: Subir un comprobante de entrega
+      description: Guarda el archivo en uploads/proofs y registra sus metadatos en la orden.
+      tags:
+        - Uploads
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID de MongoDB de la orden.
+          schema:
+            type: string
+            example: 665f4d0a8f9a1b001234abcd
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - proof
+                - type
+              properties:
+                proof:
+                  type: string
+                  format: binary
+                  description: PDF, JPEG, PNG, WEBP o TXT de hasta 5MB.
+                type:
+                  type: string
+                  enum:
+                    - delivery_proof
+      responses:
+        "200":
+          description: Comprobante asociado correctamente.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Order"
+        "400":
+          description: Archivo faltante, campo incorrecto, MIME o tipo documental invalido.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Orden no encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "413":
+          description: El archivo supera el maximo de 5MB.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al almacenar el archivo o sus metadatos.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"

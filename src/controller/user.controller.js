@@ -21,8 +21,16 @@ exports.getOne = asyncHandler(async (req, res, next) => {
 
 exports.uploadUserDocument = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const { type } = req.body;
-  const updatedUser = await UserService.addDocument(id, req.file, type);
+  const updatedUser = await UserService.addDocument(
+    id,
+    req.file,
+    req.documentType,
+  );
 
+  logger.info("Documento asociado a un usuario", {
+    userId: id,
+    fileName: req.file.filename,
+    documentType: req.documentType,
+  });
   responseFormat(req, res, 200, updatedUser);
 });

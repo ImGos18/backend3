@@ -5,6 +5,7 @@ const { USER_ROLES, DOCUMENT_TYPES } = require("./../constants/index");
 const AppError = require("./../errors/AppError");
 const validateFields = require("../utils/validateFields");
 const logger = require("../config/logger");
+const createFileMetadata = require("../utils/fileMetadata");
 class UserService {
   static async create({ name, email, role = USER_ROLES.USER }) {
     const requiredFields = ["name", "email", "role"];
@@ -48,7 +49,13 @@ class UserService {
 
   static async addDocument(id, file, type) {
     if (!file) {
-      throw new AppError(ERROR_CODES.MISSING_FILE);
+      throw new AppError(ERROR_CODES.FILE_REQUIRED);
+    }
+    if (!mongoose.isValidObjectId(id)) {
+      throw new AppError(ERROR_CODES.INVALID_OBJECT_ID);
+    }
+    if (type !== DOCUMENT_TYPES.USER_DOCUMENT) {
+      throw new AppError(ERROR_CODES.INVALID_DOCUMENT_TYPE);
     }
 
     const user = await UserRepository.getOne({ id });
@@ -56,28 +63,21 @@ class UserService {
       throw new AppError(ERROR_CODES.USER_NOT_FOUND);
     }
 
-    const document = {
-      originalName: file.originalname,
-      fileName: file.filename,
-      path: file.path,
-      mimeType: file.mimetype,
-      size: file.size,
-      type,
-      uploadedAt: new Date(),
-    };
+    try {
+      const document = createFileMetadata(file, type);
+      user.documents.push(document);
 
-    user.documents.push(document);
-
-    const updatedUser = await UserRepository.update(
-      { id },
-      { documents: user.documents },
-    );
-
-    logger.info("Documento de usuario cargado correctamente", {
-      userId: id,
-      type,
-    });
-    return updatedUser;
+      return await UserRepository.update(
+        { id },
+        { documents: user.documents },
+      );
+    } catch (error) {
+      logger.error("No se pudieron guardar los metadatos del documento", {
+        userId: id,
+        error: error.message,
+      });
+      throw new AppError(ERROR_CODES.UPLOAD_ERROR);
+    }
   }
 }
 

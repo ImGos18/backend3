@@ -2,8 +2,10 @@ const CourierRepository = require("./../repositories/couriers.repository");
 const AppError = require("./../errors/AppError");
 const { ERROR_CODES } = require("./../errors/error-codes");
 const validateFields = require("../utils/validateFields");
-const { default: mongoose, isValidObjectId } = require("mongoose");
+const mongoose = require("mongoose");
 const { DOCUMENT_TYPES } = require("../constants");
+const createFileMetadata = require("../utils/fileMetadata");
+const logger = require("../config/logger");
 
 class CourierService {
   static async create(data) {
@@ -61,25 +63,34 @@ class CourierService {
     return CouriersRandom;
   }
 
-  static async uploadDocument(id, file) {
+  static async uploadDocument(id, file, type) {
     if (!file) {
       throw new AppError(ERROR_CODES.FILE_REQUIRED);
+    }
+    if (!mongoose.isValidObjectId(id)) {
+      throw new AppError(ERROR_CODES.INVALID_OBJECT_ID);
+    }
+    if (type !== DOCUMENT_TYPES.DRIVER_LICENSE) {
+      throw new AppError(ERROR_CODES.INVALID_DOCUMENT_TYPE);
     }
     const courier = await CourierRepository.getOne({ id });
     if (!courier) {
       throw new AppError(ERROR_CODES.COURIER_NOT_FOUND);
     }
-    const licence = {
-      originalName: file.originalname,
-      fileName: file.filename,
-      path: file.path,
-      mimeType: file.mimetype,
-      size: file.size,
-      type: DOCUMENT_TYPES.DRIVER_LICENSE,
-      uploadedAt: new Date(),
-    };
-    courier.documents.push(licence);
-    return CourierRepository.update(id, { documents: courier.documents });
+    try {
+      const licence = createFileMetadata(file, type);
+      courier.documents.push(licence);
+
+      return await CourierRepository.update(id, {
+        documents: courier.documents,
+      });
+    } catch (error) {
+      logger.error("No se pudieron guardar los metadatos de la licencia", {
+        courierId: id,
+        error: error.message,
+      });
+      throw new AppError(ERROR_CODES.UPLOAD_ERROR);
+    }
   }
 }
 

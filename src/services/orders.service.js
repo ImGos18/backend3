@@ -3,7 +3,9 @@ const validateFields = require("./../utils/validateFields");
 const { ORDER_STATUS, DOCUMENT_TYPES } = require("./../constants/index");
 const AppError = require("../errors/AppError");
 const { ERROR_CODES } = require("./../errors/error-codes");
-const { default: mongoose, mongo } = require("mongoose");
+const mongoose = require("mongoose");
+const createFileMetadata = require("../utils/fileMetadata");
+const logger = require("../config/logger");
 
 class OrderService {
   static async create(data) {
@@ -93,24 +95,30 @@ class OrderService {
     return randomOrder;
   }
 
-  static async addProof(id, file) {
+  static async addProof(id, file, type) {
     if (!file) {
       throw new AppError(ERROR_CODES.FILE_REQUIRED);
+    }
+    if (!mongoose.isValidObjectId(id)) {
+      throw new AppError(ERROR_CODES.INVALID_OBJECT_ID);
+    }
+    if (type !== DOCUMENT_TYPES.DELIVERY_PROOF) {
+      throw new AppError(ERROR_CODES.INVALID_DOCUMENT_TYPE);
     }
     const order = await OrderRepository.getOne(id);
     if (!order) {
       throw new AppError(ERROR_CODES.ORDER_NOT_FOUND);
     }
-    const proof = {
-      originalName: file.originalname,
-      fileName: file.filename,
-      path: file.path,
-      mimeType: file.mimetype,
-      size: file.size,
-      type: DOCUMENT_TYPES.DELIVERY_PROOF,
-      uploadedAt: new Date(),
-    };
-    return OrderRepository.update(id, { proof });
+    try {
+      const proof = createFileMetadata(file, type);
+      return await OrderRepository.update(id, { proof });
+    } catch (error) {
+      logger.error("No se pudieron guardar los metadatos del comprobante", {
+        orderId: id,
+        error: error.message,
+      });
+      throw new AppError(ERROR_CODES.UPLOAD_ERROR);
+    }
   }
 }
 

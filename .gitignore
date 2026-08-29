@@ -5,4 +5,12 @@ postman
 *.log
 seed.js
 /uploads/*
-!/uploads/**/.gitkeep
+!/uploads/documents/
+!/uploads/licenses/
+!/uploads/proofs/
+/uploads/documents/*
+/uploads/licenses/*
+/uploads/proofs/*
+!/uploads/documents/.gitkeep
+!/uploads/licenses/.gitkeep
+!/uploads/proofs/.gitkeep

@@ -7,8 +7,8 @@ components:
           type: string
           example: error
         error:
-          type: integer
-          example: 404
+          type: string
+          example: FILE_REQUIRED
         message:
           type: string
           example: No se encontró la orden con el ID proporcionado.
@@ -72,6 +72,8 @@ components:
         priority:
           type: string
           example: normal
+        proof:
+          $ref: "#/components/schemas/FileMetadata"
 
     User:
       type: object
@@ -89,6 +91,10 @@ components:
         role:
           type: string
           example: customer
+        documents:
+          type: array
+          items:
+            $ref: "#/components/schemas/FileMetadata"
 
     Courier:
       type: object
@@ -106,6 +112,52 @@ components:
         available:
           type: boolean
           example: true
+        documents:
+          type: array
+          items:
+            $ref: "#/components/schemas/FileMetadata"
+
+    FileMetadata:
+      type: object
+      required:
+        - originalName
+        - fileName
+        - path
+        - mimeType
+        - size
+        - type
+        - uploadedAt
+      properties:
+        originalName:
+          type: string
+          example: comprobante.pdf
+        fileName:
+          type: string
+          example: 1720000000000-550e8400-e29b-41d4-a716-446655440000.pdf
+        path:
+          type: string
+          example: uploads/proofs/1720000000000-550e8400-e29b-41d4-a716-446655440000.pdf
+        mimeType:
+          type: string
+          enum:
+            - application/pdf
+            - image/jpeg
+            - image/png
+            - image/webp
+            - text/plain
+        size:
+          type: integer
+          maximum: 5242880
+          example: 245760
+        type:
+          type: string
+          enum:
+            - user_document
+            - driver_license
+            - delivery_proof
+        uploadedAt:
+          type: string
+          format: date-time
 
     Delivery:
       type: object

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const CouriersController = require("./../controller/couriers.controller");
-const upload = require("./../middlewares/upload.middleware");
+const { uploadCourierLicense } = require("../middlewares/upload.middleware");
 
 // POST /api/couriers -> crea un repartidor
 router.post("/", CouriersController.create);
@@ -15,7 +15,7 @@ router.get("/:id", CouriersController.getOne);
 //POST /api/couriers/:id/documents -> sube la licencia de conducir al repartidor
 router.post(
   "/:id/documents",
-  upload.single("license"),
+  uploadCourierLicense,
   CouriersController.uploadDocument,
 );
 

@@ -57,9 +57,17 @@ exports.uploadDocument = asyncHandler(
     const { id } = req.params;
     const { file } = req;
 
-    const updatedCourier = await CourierService.uploadDocument(id, file);
+    const updatedCourier = await CourierService.uploadDocument(
+      id,
+      file,
+      req.documentType,
+    );
 
-    logger.info("se ha subido correctamente la licencia de conducir");
+    logger.info("Licencia asociada a un courier", {
+      courierId: id,
+      fileName: file.filename,
+      documentType: req.documentType,
+    });
     responseFormat(req, res, 200, updatedCourier);
   },
 );

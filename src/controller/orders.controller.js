@@ -28,8 +28,16 @@ exports.updateStatus = asyncHandler(async (req, res, next) => {
 
 exports.uploadOrderProof = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const file = req.file;
-  const updatedOrder = await OrderService.addProof(id, file);
+  const updatedOrder = await OrderService.addProof(
+    id,
+    req.file,
+    req.documentType,
+  );
 
+  logger.info("Comprobante asociado a una orden", {
+    orderId: id,
+    fileName: req.file.filename,
+    documentType: req.documentType,
+  });
   responseFormat(req, res, 200, updatedOrder);
 });

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const UserController = require("../controller/user.controller");
-const upload = require("./../middlewares/upload.middleware");
+const { uploadUserDocument } = require("../middlewares/upload.middleware");
 
 // router.get("/test", OrderController.create);
 
@@ -17,7 +17,7 @@ router.get("/:id", UserController.getOne);
 //sube un documento a un cliente
 router.post(
   "/:id/documents",
-  upload.single("document"),
+  uploadUserDocument,
   UserController.uploadUserDocument,
 );
 

@@ -101,7 +101,7 @@ la app en Supertest sin iniciar el servidor ni conectarse dos veces.
 | POST   | `/api/couriers`               | Crear repartidor                        |
 | GET    | `/api/couriers`               | Listar repartidores                     |
 | GET    | `/api/couriers/:id`           | Obtener repartidor por id               |
-| POST   | `/api/couriers/:id/documents` | Subir un documento para un repetartidor |
+| POST   | `/api/couriers/:id/documents` | Subir la licencia de un repartidor      |
 | POST   | `/api/orders`                 | Crear envio                             |
 | GET    | `/api/orders`                 | Listar envios                           |
 | GET    | `/api/orders/:id`             | Obtener envio por id                    |
@@ -111,6 +111,31 @@ la app en Supertest sin iniciar el servidor ni conectarse dos veces.
 | GET    | `/api/deliveries`             | Listar entregas                         |
 | GET    | `/api/deliveries/:id`         | Obtener entrega + tracking              |
 | PATCH  | `/api/deliveries/:id/status`  | Cambiar estado de una entrega           |
+
+### Carga de archivos
+
+Los endpoints de carga reciben `multipart/form-data`, aceptan un solo archivo
+de hasta 5MB y permiten PDF, JPEG, PNG, WEBP y TXT. Los archivos se almacenan
+en `uploads/documents`, `uploads/licenses` o `uploads/proofs`; MongoDB conserva
+solo sus metadatos. El contenido de `uploads/` esta excluido mediante
+`.gitignore`.
+
+| Entidad  | Endpoint                       | Campo de archivo | Campo `type`       |
+| -------- | ------------------------------ | ---------------- | ------------------ |
+| Usuario  | `/api/users/:id/documents`    | `document`       | `user_document`    |
+| Courier  | `/api/couriers/:id/documents` | `license`        | `driver_license`   |
+| Orden    | `/api/orders/:id/proof`       | `proof`          | `delivery_proof`   |
+
+Ejemplo:
+
+```bash
+curl -X POST http://localhost:8080/api/orders/ORDER_ID/proof \
+  -F "type=delivery_proof" \
+  -F "proof=@./comprobante.pdf"
+```
+
+Si la validacion, la busqueda de la entidad o el guardado de metadatos falla,
+el archivo temporal se elimina y el error usa el formato general de la API.
 
 ### Endpoints para cargar datos de prueba (solo disponible en entorno development)
 

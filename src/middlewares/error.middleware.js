@@ -2,6 +2,7 @@ const AppError = require("../errors/AppError");
 const { ERROR_CODES } = require("../errors/error-codes");
 const config = require("../config/index");
 const logger = require("../config/logger");
+const { removeUploadedFile } = require("./upload.middleware");
 
 exports.notFoundHandler = (req, res, next) => {
   const error = new AppError("La ruta solicitada no existe");
@@ -14,7 +15,7 @@ exports.notFoundHandler = (req, res, next) => {
   next(error);
 };
 
-exports.errorHandler = (error, req, res, next) => {
+exports.errorHandler = async (error, req, res, next) => {
   const statusCode = error.statusCode || 500;
   const errorCode = error.code || ERROR_CODES.INTERNAL_SERVER_ERROR;
 
@@ -33,5 +34,20 @@ exports.errorHandler = (error, req, res, next) => {
   if (config.NODE_ENV === "development" && error.details) {
     response.details = error.details;
   }
+
+  if (req.file) {
+    try {
+      await removeUploadedFile(req.file);
+      logger.info("Archivo de una carga fallida eliminado", {
+        route: req.originalUrl,
+      });
+    } catch (cleanupError) {
+      logger.error("No se pudo eliminar un archivo de una carga fallida", {
+        path: req.file.path,
+        error: cleanupError.message,
+      });
+    }
+  }
+
   res.status(statusCode).json(response);
 };
