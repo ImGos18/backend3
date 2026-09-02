@@ -15,7 +15,11 @@ describe("Delivery API", () => {
 
   beforeEach(async () => {
     const user = await UserModel.create(fillUserData());
+    trackTestDocument(UserModel, user._id);
+
     courier = await CourierModel.create(fillCourierData());
+    trackTestDocument(CourierModel, courier._id);
+
     order = await OrderModel.create({
       customerName: user.name,
       customer: user._id,
@@ -26,9 +30,6 @@ describe("Delivery API", () => {
       items: [{ name: "Paquete de prueba", quantity: 1, price: 100 }],
       courierId: courier._id,
     });
-
-    trackTestDocument(UserModel, user._id);
-    trackTestDocument(CourierModel, courier._id);
     trackTestDocument(OrderModel, order._id);
   });
 
@@ -45,7 +46,7 @@ describe("Delivery API", () => {
     const response = await createDelivery();
 
     expect(response.status).to.equal(201);
-    expect(response.body).to.have.property("status", "sucess");
+    expect(response.body).to.have.property("status", "success");
     expect(response.body).to.have.property("data");
     expect(response.body.data).to.have.property("orderId", order._id.toString());
     expect(response.body.data).to.have.property(
@@ -60,6 +61,7 @@ describe("Delivery API", () => {
     const response = await request(app)
       .post("/api/deliveries")
       .send({ orderId: "" });
+    trackTestDocument(DeliveryModel, response.body.data?._id);
 
     expect(response.status).to.equal(400);
     expect(response.body).to.have.property("status", "error");
@@ -71,7 +73,7 @@ describe("Delivery API", () => {
     const response = await request(app).get("/api/deliveries");
 
     expect(response.status).to.equal(200);
-    expect(response.body).to.have.property("status", "sucess");
+    expect(response.body).to.have.property("status", "success");
     expect(response.body).to.have.property("results");
     expect(response.body.results).to.be.at.least(1);
     expect(response.body.data).to.be.an("array");
@@ -84,7 +86,7 @@ describe("Delivery API", () => {
     );
 
     expect(response.status).to.equal(200);
-    expect(response.body).to.have.property("status", "sucess");
+    expect(response.body).to.have.property("status", "success");
     expect(response.body).to.have.property("data");
   });
 
@@ -105,7 +107,7 @@ describe("Delivery API", () => {
       .send({ status: "in_transit" });
 
     expect(response.status).to.equal(200);
-    expect(response.body).to.have.property("status", "sucess");
+    expect(response.body).to.have.property("status", "success");
     expect(response.body).to.have.property("data");
     expect(response.body.data).to.have.property("_id", created.body.data._id);
     expect(response.body.data).to.have.property("status", "in_transit");

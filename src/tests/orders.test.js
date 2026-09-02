@@ -2,7 +2,7 @@ const app = require("./../app");
 const UserModel = require("./../models/user");
 const OrderModel = require("./../models/order");
 const CourierModel = require("./../models/courier");
-const { USER_ROLES } = require("./../constants/index");
+const fillUserData = require("./../../mocks/userMocks");
 const fillCourierData = require("./../../mocks/couriersMock");
 const mongoose = require("mongoose");
 
@@ -10,12 +10,23 @@ const request = require("supertest");
 const { expect } = require("chai");
 
 describe("Orders API", () => {
+  let user;
+  let courier;
+
+  beforeEach(async () => {
+    user = await UserModel.create(fillUserData());
+    trackTestDocument(UserModel, user._id);
+
+    courier = await CourierModel.create(fillCourierData());
+    trackTestDocument(CourierModel, courier._id);
+  });
+
   it("Deberia responder con una lista de Ordenes", async () => {
     const response = await request(app).get("/api/orders");
 
     expect(response.status).to.equal(200);
     expect(response.body).to.have.property("status");
-    expect(response.body.status).to.equal("sucess");
+    expect(response.body.status).to.equal("success");
     expect(response.body).to.have.property("results");
     expect(response.body.results).to.be.a("number");
     expect(response.body).to.have.property("data");
@@ -23,15 +34,6 @@ describe("Orders API", () => {
   });
 
   it("deberia crear un pedido correctamente", async () => {
-    const user = await UserModel.create({
-      name: "test",
-      email: `test-${Math.random() * 1000}@test.com`,
-      role: USER_ROLES.CUSTOMER,
-    });
-    const courier = await CourierModel.create(fillCourierData());
-    trackTestDocument(UserModel, user._id);
-    trackTestDocument(CourierModel, courier._id);
-
     const response = await request(app)
       .post("/api/orders")
       .send({
@@ -46,7 +48,7 @@ describe("Orders API", () => {
     trackTestDocument(OrderModel, response.body.data?._id);
 
     expect(response.status).to.equal(201);
-    expect(response.body.status).to.equal("sucess");
+    expect(response.body.status).to.equal("success");
     expect(response.body).to.have.property("results");
     expect(response.body.results).to.equal(1);
     expect(response.body).to.have.property("data");
@@ -54,17 +56,11 @@ describe("Orders API", () => {
   });
 
   it("deberia devolver un error si falta algun campo requerido", async () => {
-    const user = await UserModel.create({
-      name: "test",
-      email: `test-${Math.random() * 1000}@test.com`,
-      role: USER_ROLES.CUSTOMER,
-    });
-    trackTestDocument(UserModel, user._id);
-
     const response = await request(app).post("/api/orders").send({
       customer: user._id.toString(),
       address: "av siempreviva 700",
     });
+    trackTestDocument(OrderModel, response.body.data?._id);
 
     expect(response.status).to.equal(400);
     expect(response.body).to.have.property("status");

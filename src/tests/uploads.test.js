@@ -41,7 +41,7 @@ describe("Uploads API", () => {
     trackTestFile(response.body.data?.documents?.[0]?.path);
 
     expect(response.status).to.equal(200);
-    expect(response.body).to.have.property("status", "sucess");
+    expect(response.body).to.have.property("status", "success");
     expect(response.body.data.documents).to.have.lengthOf(1);
     expect(response.body.data.documents[0]).to.include({
       originalName: "document.txt",
@@ -64,7 +64,7 @@ describe("Uploads API", () => {
     trackTestFile(license?.path);
 
     expect(response.status).to.equal(200);
-    expect(response.body).to.have.property("status", "sucess");
+    expect(response.body).to.have.property("status", "success");
     expect(response.body.data.documents).to.have.lengthOf(1);
     expect(license).to.include({
       originalName: "document.txt",
@@ -76,6 +76,8 @@ describe("Uploads API", () => {
 
   it("Deberia subir un comprobante de entrega a una orden", async () => {
     const courier = await CourierModel.create(fillCourierData());
+    trackTestDocument(CourierModel, courier._id);
+
     const order = await OrderModel.create({
       customerName: "Cliente de prueba",
       address: "Calle de testing 123",
@@ -84,7 +86,6 @@ describe("Uploads API", () => {
       courierId: courier._id,
       items: [{ name: "Paquete de prueba", quantity: 1, price: 100 }],
     });
-    trackTestDocument(CourierModel, courier._id);
     trackTestDocument(OrderModel, order._id);
 
     const response = await request(app)
@@ -96,7 +97,7 @@ describe("Uploads API", () => {
     trackTestFile(proof?.path);
 
     expect(response.status).to.equal(200);
-    expect(response.body).to.have.property("status", "sucess");
+    expect(response.body).to.have.property("status", "success");
     expect(proof).to.include({
       originalName: "document.txt",
       mimeType: "text/plain",

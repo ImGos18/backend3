@@ -10,7 +10,7 @@
  * @example
  * responseFormat(req,res,200,[{info}]);
  * {
-    "status": "sucess",
+    "status": "success",
     "results": 1,
     "data": [ info]
 }
@@ -19,7 +19,7 @@
 function responseFormat(req, res, statusCode, data) {
   return res
     .status(statusCode)
-    .json({ status: "sucess", results: data.length || 1, data: data });
+    .json({ status: "success", results: data.length || 1, data: data });
 }
 
 module.exports = responseFormat;

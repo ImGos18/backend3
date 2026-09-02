@@ -23,6 +23,8 @@ describe("Product API", () => {
     productData.name = undefined;
     productData.price = undefined;
     const response = await request(app).post("/api/products").send(productData);
+    trackTestDocument(ProductModel, response.body.data?._id);
+
     expect(response.status).to.equal(400);
 
     expect(response.body).to.have.property("status", "error");
@@ -32,7 +34,7 @@ describe("Product API", () => {
   it("deberia devolver todos los productos", async () => {
     const response = await request(app).get("/api/products");
     expect(response.status).to.equal(200);
-    expect(response.body).to.have.property("status", "sucess");
+    expect(response.body).to.have.property("status", "success");
     expect(response.body).to.have.property("results");
     expect(response.body).to.have.property("data");
     expect(response.body.data).to.be.an("array");
@@ -43,7 +45,7 @@ describe("Product API", () => {
     trackTestDocument(ProductModel, product._id);
     const response = await request(app).get(`/api/products/${product._id}`);
     expect(response.status).to.equal(200);
-    expect(response.body).to.have.property("status", "sucess");
+    expect(response.body).to.have.property("status", "success");
   });
 
   it("deberia devolver error si el id ingresado no es valido", async () => {

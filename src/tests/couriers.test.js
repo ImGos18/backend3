@@ -19,7 +19,7 @@ describe("Couriers API", () => {
     trackTestDocument(CourierModel, response.body.data?._id);
 
     expect(response.status).to.equal(201);
-    expect(response.body).to.have.property("status", "sucess");
+    expect(response.body).to.have.property("status", "success");
     expect(response.body).to.have.property("data");
     expect(response.body.data).to.have.property("name", courierData.name);
     expect(response.body.data).to.have.property("zone", courierData.zone);
@@ -27,6 +27,8 @@ describe("Couriers API", () => {
 
   it("deberia devolver un error si faltan campos requeridos al crear courier", async () => {
     const response = await request(app).post("/api/couriers").send({});
+    trackTestDocument(CourierModel, response.body.data?._id);
+
     expect(response.status).to.equal(400);
     expect(response.body).to.have.property("status", "error");
     expect(response.body).to.have.property("error", "MISSING_REQUIRED_FIELDS");
@@ -35,7 +37,7 @@ describe("Couriers API", () => {
   it("deberia devolver todos los couriers", async () => {
     const response = await request(app).get("/api/couriers");
     expect(response.status).to.equal(200);
-    expect(response.body).to.have.property("status", "sucess");
+    expect(response.body).to.have.property("status", "success");
     expect(response.body).to.have.property("data");
     expect(response.body.data).to.be.an("array");
     expect(response.body.data.length).to.be.at.least(1);
@@ -46,7 +48,7 @@ describe("Couriers API", () => {
       `/api/couriers/${existingCourier._id}`,
     );
     expect(response.status).to.equal(200);
-    expect(response.body).to.have.property("status", "sucess");
+    expect(response.body).to.have.property("status", "success");
     expect(response.body).to.have.property("data");
     expect(response.body.data).to.be.an("object");
     expect(response.body.data).to.have.property(

@@ -71,6 +71,11 @@ probar los endpoints de Express sin abrir un puerto HTTP. Cubre health check,
 usuarios, productos, couriers, ordenes, entregas, mocks, logger y cargas de
 archivos.
 
+`@faker-js/faker` genera los datos usados por los factories de testing y por
+`mocks.controller.js`. Como ese controlador forma parte del codigo que carga la
+aplicacion, Faker es una dependencia de produccion y queda instalado con
+`npm install` (tambien es necesario para ejecutar los tests).
+
 ```bash
 npm test
 ```

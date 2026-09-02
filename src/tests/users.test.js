@@ -12,7 +12,7 @@ describe("Users endpoints", () => {
     trackTestDocument(UserModel, response.body.data?._id);
 
     expect(response.status).to.equal(201);
-    expect(response.body).to.have.property("status", "sucess");
+    expect(response.body).to.have.property("status", "success");
     expect(response.body).to.have.property("data");
     expect(response.body.data).to.have.property("_id");
   });
@@ -22,6 +22,8 @@ describe("Users endpoints", () => {
     user.email = "";
 
     const response = await request(app).post("/api/users").send(user);
+    trackTestDocument(UserModel, response.body.data?._id);
+
     expect(response.status).to.equal(400);
     expect(response.body).to.have.property("status", "error");
     expect(response.body).to.have.property("error", "MISSING_REQUIRED_FIELDS");
@@ -34,7 +36,7 @@ describe("Users endpoints", () => {
     const response = await request(app).get(`/api/users/${user._id}`);
 
     expect(response.status).to.equal(200);
-    expect(response.body).to.have.property("status", "sucess");
+    expect(response.body).to.have.property("status", "success");
     expect(response.body).to.have.property("results");
     expect(response.body).to.have.property("data");
     expect(response.body.data).to.have.property("_id");
