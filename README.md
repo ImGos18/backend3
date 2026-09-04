@@ -56,13 +56,13 @@ El archivo [`.env.example`](./.env.example) documenta todas las variables. El
 servidor valida las variables obligatorias al arrancar, mientras que el entorno
 `test` utiliza valores seguros por defecto para `PORT` y `SECRET`.
 
-| Variable         | Requerida en desarrollo | Uso |
-| ---------------- | ----------------------- | --- |
-| `PORT`           | Si                      | Puerto HTTP del servidor. |
-| `SECRET`         | Si                      | Secreto de la aplicacion. No usar el valor de ejemplo en produccion. |
-| `MONGO_URI`      | Si                      | URI de MongoDB para desarrollo/produccion. |
+| Variable         | Requerida en desarrollo | Uso                                                                        |
+| ---------------- | ----------------------- | -------------------------------------------------------------------------- |
+| `PORT`           | Si                      | Puerto HTTP del servidor.                                                  |
+| `SECRET`         | Si                      | Secreto de la aplicacion. No usar el valor de ejemplo en produccion.       |
+| `MONGO_URI`      | Si                      | URI de MongoDB para desarrollo/produccion.                                 |
 | `MONGO_TEST_URI` | No                      | URI exclusiva para tests; si se define, tiene prioridad sobre `MONGO_URI`. |
-| `NODE_ENV`       | Si                      | Entorno: `development`, `test` o `production`. |
+| `NODE_ENV`       | Si                      | Entorno: `development`, `test` o `production`.                             |
 
 ## Testing funcional
 
@@ -93,29 +93,29 @@ la app en Supertest sin iniciar el servidor ni conectarse dos veces.
 
 ### Endpoints
 
-| Metodo | Ruta                          | Descripcion                             |
-| ------ | ----------------------------- | --------------------------------------- |
-| GET    | `/`                           | Health check basico                     |
-| POST   | `/api/users`                  | Crear cliente                           |
-| GET    | `/api/users`                  | Listar clientes                         |
-| GET    | `/api/users/:id`              | Obtener cliente por id                  |
-| POST   | `/api/users/:id/documents`    | Subir un documento para un usuario      |
-| POST   | `/api/products`               | Crear producto                          |
-| GET    | `/api/products`               | Listar productos                        |
-| GET    | `/api/products/:id`           | Obtener producto por id                 |
-| POST   | `/api/couriers`               | Crear repartidor                        |
-| GET    | `/api/couriers`               | Listar repartidores                     |
-| GET    | `/api/couriers/:id`           | Obtener repartidor por id               |
-| POST   | `/api/couriers/:id/documents` | Subir la licencia de un repartidor      |
-| POST   | `/api/orders`                 | Crear envio                             |
-| GET    | `/api/orders`                 | Listar envios                           |
-| GET    | `/api/orders/:id`             | Obtener envio por id                    |
-| PATCH  | `/api/orders/:id/status`      | Cambiar estado de un envio              |
-| POST   | `/api/orders/:id/proof`       | Subir un comprobante de entrega         |
-| POST   | `/api/deliveries`             | Crear entrega (order + courier)         |
-| GET    | `/api/deliveries`             | Listar entregas                         |
-| GET    | `/api/deliveries/:id`         | Obtener entrega + tracking              |
-| PATCH  | `/api/deliveries/:id/status`  | Cambiar estado de una entrega           |
+| Metodo | Ruta                          | Descripcion                        |
+| ------ | ----------------------------- | ---------------------------------- |
+| GET    | `/`                           | Health check basico                |
+| POST   | `/api/users`                  | Crear cliente                      |
+| GET    | `/api/users`                  | Listar clientes                    |
+| GET    | `/api/users/:id`              | Obtener cliente por id             |
+| POST   | `/api/users/:id/documents`    | Subir un documento para un usuario |
+| POST   | `/api/products`               | Crear producto                     |
+| GET    | `/api/products`               | Listar productos                   |
+| GET    | `/api/products/:id`           | Obtener producto por id            |
+| POST   | `/api/couriers`               | Crear repartidor                   |
+| GET    | `/api/couriers`               | Listar repartidores                |
+| GET    | `/api/couriers/:id`           | Obtener repartidor por id          |
+| POST   | `/api/couriers/:id/documents` | Subir la licencia de un repartidor |
+| POST   | `/api/orders`                 | Crear envio                        |
+| GET    | `/api/orders`                 | Listar envios                      |
+| GET    | `/api/orders/:id`             | Obtener envio por id               |
+| PATCH  | `/api/orders/:id/status`      | Cambiar estado de un envio         |
+| POST   | `/api/orders/:id/proof`       | Subir un comprobante de entrega    |
+| POST   | `/api/deliveries`             | Crear entrega (order + courier)    |
+| GET    | `/api/deliveries`             | Listar entregas                    |
+| GET    | `/api/deliveries/:id`         | Obtener entrega + tracking         |
+| PATCH  | `/api/deliveries/:id/status`  | Cambiar estado de una entrega      |
 
 ### Carga de archivos
 
@@ -125,11 +125,11 @@ en `uploads/documents`, `uploads/licenses` o `uploads/proofs`; MongoDB conserva
 solo sus metadatos. El contenido de `uploads/` esta excluido mediante
 `.gitignore`.
 
-| Entidad  | Endpoint                       | Campo de archivo | Campo `type`       |
-| -------- | ------------------------------ | ---------------- | ------------------ |
-| Usuario  | `/api/users/:id/documents`    | `document`       | `user_document`    |
-| Courier  | `/api/couriers/:id/documents` | `license`        | `driver_license`   |
-| Orden    | `/api/orders/:id/proof`       | `proof`          | `delivery_proof`   |
+| Entidad | Endpoint                      | Campo de archivo | Campo `type`     |
+| ------- | ----------------------------- | ---------------- | ---------------- |
+| Usuario | `/api/users/:id/documents`    | `document`       | `user_document`  |
+| Courier | `/api/couriers/:id/documents` | `license`        | `driver_license` |
+| Orden   | `/api/orders/:id/proof`       | `proof`          | `delivery_proof` |
 
 Ejemplo:
 
@@ -332,3 +332,7 @@ para poder acceder a la documentacion web que se creo utilizando Swagger se pued
 # Entorno de puebas
 
 para realizar los test de de funcionamiento utilizar el comando `npm run test` y se ejecutaran todos los test que se encuentran en la carpeta `test`, los test se realizan utilizando mocha, chai y supertest
+
+# Corriendo la app desde un container Docker
+
+para volver esta app un contenedor de docker solo debes ejecutar el comando `docker build -t nombre_de_tu_imagen .` y luego `docker run --name Nombre_de_tu_container -p puerto_que_quieras_usar:8080 --env-file .env nombre_de_tu_imagen` recuerda que debes agregar las variables de entorno, de lo contrario la aplicacion no funcionara, guiate de el archivo .env.example para ver cuales son las variables que necesitas, si no quieres agregarlas en el comando `docker run` puedes agregarlas en el archivo Dockerfile con la instruccion `ENV nombre_variable=valor_variable` sin espacio entre el "=", al hacer eso la app estará corriendo en el puerto que hayas definido en tu maquina.
