@@ -26,7 +26,9 @@ exports.getAll = asyncHandler(
    * @type {Middleware}
    */
   async (req, res, next) => {
-    const allCouriers = await CourierService.getAll();
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 10;
+    const allCouriers = await CourierService.getAll({ page, limit });
 
     if (!allCouriers) {
       throw new AppError(ERROR_CODES.ROUTE_NOT_FOUND);

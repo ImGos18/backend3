@@ -17,7 +17,9 @@ exports.getOne = asyncHandler(async (req, res, next) => {
 });
 
 exports.getAll = asyncHandler(async (req, res, next) => {
-  const orders = await OrderService.getAll();
+  const page = req.query.page || 1;
+  const limit = req.query.limit || 10;
+  const orders = await OrderService.getAll({ page, limit });
   responseFormat(req, res, 200, orders);
 });
 

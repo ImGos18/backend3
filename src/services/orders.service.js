@@ -68,8 +68,8 @@ class OrderService {
     return order;
   }
 
-  static async getAll() {
-    const orders = await OrderRepository.getAll();
+  static async getAll({ page, limit }) {
+    const orders = await OrderRepository.getAll({ page, limit });
     if (!orders) throw new AppError(ERROR_CODES.ORDER_NOT_FOUND);
 
     return orders;

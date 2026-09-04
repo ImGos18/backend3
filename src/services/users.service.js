@@ -21,8 +21,8 @@ class UserService {
 
     return user;
   }
-  static async getAll() {
-    const users = await UserRepository.getAll();
+  static async getAll({ page, limit }) {
+    const users = await UserRepository.getAll({ page, limit });
     if (!users) {
       throw new AppError(
         ERROR_CODES.USER_NOT_FOUND,
@@ -67,10 +67,7 @@ class UserService {
       const document = createFileMetadata(file, type);
       user.documents.push(document);
 
-      return await UserRepository.update(
-        { id },
-        { documents: user.documents },
-      );
+      return await UserRepository.update({ id }, { documents: user.documents });
     } catch (error) {
       logger.error("No se pudieron guardar los metadatos del documento", {
         userId: id,

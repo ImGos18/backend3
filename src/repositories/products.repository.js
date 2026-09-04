@@ -1,8 +1,13 @@
 const Product = require("./../models/product");
+const {
+  create,
+  getAll,
+  getOne,
+} = require("../utils/repositoriesStandardFunctions");
 
 class ProductRepository {
   static async create({ name, price, stock, status }) {
-    const product = await Product.create({
+    const product = await create(Product, {
       name: name,
       price: price,
       stock: stock,
@@ -11,14 +16,14 @@ class ProductRepository {
 
     return product;
   }
-  static async findAll() {
-    const products = await Product.find();
+  static async findAll({ page, limit }) {
+    const products = await getAll(Product, page, limit);
 
     return products;
   }
 
   static async getOne({ id }) {
-    const product = await Product.findById(id);
+    const product = await getOne(Product, id);
 
     return product;
   }

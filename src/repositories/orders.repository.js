@@ -1,18 +1,23 @@
 const Order = require("../models/order");
+const {
+  create,
+  getAll,
+  getOne,
+} = require("./../utils/repositoriesStandardFunctions");
 
 class OrderRepository {
   static async create(data) {
-    const orderCreated = await Order.create(data);
+    const orderCreated = await create(Order, data);
 
     return orderCreated;
   }
   static async getOne(id) {
-    const order = await Order.findById(id);
+    const order = await getOne(Order, id);
     return order;
   }
 
-  static async getAll() {
-    const orders = await Order.find();
+  static async getAll({ page, limit }) {
+    const orders = await getAll(Order, page, limit);
     return orders;
   }
   static async updateStatus(id, status) {

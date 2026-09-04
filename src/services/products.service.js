@@ -24,8 +24,8 @@ class ProductService {
 
     return product;
   }
-  static async findAll() {
-    const products = await ProductRepository.findAll();
+  static async findAll({ page, limit }) {
+    const products = await ProductRepository.findAll({ page, limit });
     if (!products)
       throw new AppError(
         ERROR_CODES.PRODUCT_NOT_FOUND,

@@ -4,17 +4,17 @@ dotenv.config({ quiet: true });
 
 const NODE_ENV = process.env.NODE_ENV || "development";
 const TEST_DEFAULTS = {
-  PORT: "0",
+  PORT: "3000",
   SECRET: "test_secret",
   MONGO_URI: "mongodb://127.0.0.1:27017/shipnow_test",
 };
 const REQUIRES_ENV_VARS = ["PORT", "SECRET", "MONGO_URI", "NODE_ENV"];
 
 const environment = {
-  PORT:
-    process.env.PORT || (NODE_ENV === "test" ? TEST_DEFAULTS.PORT : undefined),
+  PORT: process.env.PORT || (NODE_ENV === "test" ? TEST_DEFAULTS.PORT : 8080),
   SECRET:
-    process.env.SECRET || (NODE_ENV === "test" ? TEST_DEFAULTS.SECRET : undefined),
+    process.env.SECRET ||
+    (NODE_ENV === "test" ? TEST_DEFAULTS.SECRET : "default_secret"),
   MONGO_URI:
     process.env.MONGO_TEST_URI ||
     process.env.MONGO_URI ||

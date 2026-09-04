@@ -10,7 +10,9 @@ exports.create = asyncHandler(async (req, res, next) => {
   responseFormat(req, res, 201, user);
 });
 exports.getAll = asyncHandler(async (req, res, next) => {
-  const users = await UserService.getAll();
+  const page = req.query.page || 1;
+  const limit = req.query.limit || 10;
+  const users = await UserService.getAll({ page, limit });
   responseFormat(req, res, 200, users);
 });
 

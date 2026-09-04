@@ -33,8 +33,8 @@ class CourierService {
     return courier;
   }
 
-  static async getAll() {
-    const allCouriers = await CourierRepository.getAll();
+  static async getAll({ page, limit }) {
+    const allCouriers = await CourierRepository.getAll({ page, limit });
     if (!allCouriers) {
       throw new Error(ERROR_CODES.COURIER_NOT_FOUND);
     }

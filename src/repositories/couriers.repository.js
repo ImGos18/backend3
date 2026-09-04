@@ -1,19 +1,24 @@
 const Courier = require("./../models/courier");
+const {
+  create,
+  getAll,
+  getOne,
+} = require("./../utils/repositoriesStandardFunctions");
 
 class CourierRepository {
   static async create({ name, zone, available }) {
-    const courier = await Courier.create({ name, zone, available });
+    const courier = await create(Courier, { name, zone, available });
 
     return courier;
   }
 
-  static async getAll() {
-    const allCouriers = await Courier.find();
+  static async getAll({ page, limit }) {
+    const Couriers = await getAll(Courier, page, limit);
 
-    return allCouriers;
+    return Couriers;
   }
   static async getOne({ id }) {
-    const courier = Courier.findById(id);
+    const courier = getOne(Courier, id);
     return courier;
   }
   static async getRandom() {

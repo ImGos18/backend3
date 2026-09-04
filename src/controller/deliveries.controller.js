@@ -11,7 +11,9 @@ exports.create = asyncHandler(async (req, res, next) => {
   responseFormat(req, res, 201, delivery);
 });
 exports.getAll = asyncHandler(async (req, res, next) => {
-  const deliveries = await DeliveriesService.getAll();
+  const page = req.query.page || 1;
+  const limit = req.query.limit || 10;
+  const deliveries = await DeliveriesService.getAll({ page, limit });
   responseFormat(req, res, 200, deliveries);
 });
 exports.getOne = asyncHandler(async (req, res, next) => {

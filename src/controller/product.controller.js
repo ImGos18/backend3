@@ -11,7 +11,9 @@ exports.create = asyncHandler(async (req, res, next) => {
 });
 
 exports.getAll = asyncHandler(async (req, res, next) => {
-  const products = await ProductService.findAll();
+  const page = req.query.page || 1;
+  const limit = req.query.limit || 10;
+  const products = await ProductService.findAll({ page, limit });
 
   responseFormat(req, res, 200, products);
 });

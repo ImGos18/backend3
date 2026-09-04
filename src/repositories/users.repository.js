@@ -1,8 +1,13 @@
 const User = require("../models/user");
+const {
+  create,
+  getAll,
+  getOne,
+} = require("./../utils/repositoriesStandardFunctions");
 
 class UserRepository {
   static async create({ name, email, role }) {
-    const user = await User.create({
+    const user = await create(User, {
       name,
       email,
       role: role,
@@ -10,12 +15,13 @@ class UserRepository {
 
     return user;
   }
-  static async getAll() {
-    const users = await User.find();
+  static async getAll({ page, limit }) {
+    // const users = await User.find();
+    const users = getAll(User, page, limit);
     return users;
   }
   static async getOne({ id }) {
-    const users = await User.findById(id);
+    const users = await getOne(User, id);
     return users;
   }
   static async getRandom() {

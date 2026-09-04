@@ -3,7 +3,6 @@ postman
 .env
 /logs
 *.log
-seed.js
 /uploads/*
 !/uploads/documents/
 !/uploads/licenses/

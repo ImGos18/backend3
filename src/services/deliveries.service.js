@@ -45,8 +45,8 @@ class DeliveriesService {
 
     return delivery;
   }
-  static async getAll() {
-    const deliveries = await DeliveriesRepository.getAll();
+  static async getAll({ page, limit }) {
+    const deliveries = await DeliveriesRepository.getAll({ page, limit });
 
     if (!deliveries) {
       throw new AppError(
