@@ -64,7 +64,7 @@ class MockController {
     let prods = [];
     for (let i = 0; i < mockResults; i++) {
       const productData = fillProdData();
-      if (!req.method === "POST") {
+      if (req.method === "POST") {
         const product = await ProductService.create(productData);
       }
       prods.push(productData);

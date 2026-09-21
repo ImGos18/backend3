@@ -45,35 +45,70 @@ components:
           type: string
           example: available
 
-    Order:
+    OrderItem:
       type: object
       properties:
         _id:
           type: string
           readOnly: true
-          example: 665f4d0a8f9a1b001234abcd
+        name:
+          type: string
+          example: Libro
+        quantity:
+          type: number
+          example: 1
+        price:
+          type: number
+          example: 100
+
+    Order:
+      type: object
+      required:
+        - customerName
+        - address
+        - weight
+        - courierId
+        - items
+      properties:
+        _id:
+          type: string
+          readOnly: true
+          example: "665f4d0a8f9a1b001234abcd"
+        customerName:
+          type: string
+          example: Ana Lopez
         customer:
           type: string
-          example: 665f4d0a8f9a1b001234abce
+          nullable: true
+          example: "665f4d0a8f9a1b001234abce"
+        address:
+          type: string
+          example: Calle Falsa 123
+        weight:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          example: 5
+        courierId:
+          type: string
+          example: "665f4d0a8f9a1b001234abcf"
         items:
           type: array
           items:
-            $ref: "#/components/schemas/Product"
-        deliveryAddress:
-          type: string
-          example: Calle Falsa 123, Ciudad, País
-        totalAmount:
-          type: number
-          format: float
-          example: 39.98
-        status:
-          type: string
-          example: pending
+            $ref: "#/components/schemas/OrderItem"
         priority:
           type: string
+          default: normal
           example: normal
-        proof:
-          $ref: "#/components/schemas/FileMetadata"
+        cost:
+          type: number
+          readOnly: true
+          description: Calculado por el servidor como weight * 10.
+          example: 50
+        status:
+          type: string
+          readOnly: true
+          example: pending
 
     User:
       type: object

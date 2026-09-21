@@ -7,7 +7,7 @@ const { DailyRotateFile } = require("winston/lib/winston/transports");
 
 const logsDir = path.join(__dirname, "../../logs");
 
-const isDevelopment = config.NODE_ENV === "development";
+const isDevOrTestEnv = ["development", "test"].includes(config.NODE_ENV);
 
 const loggerLevels = {
   fatal: 0,
@@ -45,9 +45,8 @@ const fileFormat = winston.format.combine(
 
 const logger = winston.createLogger({
   levels: loggerLevels,
-  level: isDevelopment ? "debug" : "info",
+  level: isDevOrTestEnv ? "debug" : "info",
   transports: [
-    new winston.transports.Console({ format: consoleFormat }),
     new DailyRotateFile({
       auditFile: path.join(logsDir, ".fatal-audit.json"),
       dirname: logsDir,
@@ -67,7 +66,24 @@ const logger = winston.createLogger({
       format: fileFormat,
       level: "error",
     }),
+
+    new DailyRotateFile({
+      auditFile: path.join(logsDir, ".combined-audit.json"),
+      dirname: logsDir,
+      filename: "combined-%DATE%.log",
+      datePattern: "DD-MM-YYYY",
+      maxFiles: "14d",
+      format: fileFormat,
+    }),
   ],
 });
+
+if (isDevOrTestEnv) {
+  logger.add(
+    new winston.transports.Console({
+      format: consoleFormat,
+    }),
+  );
+}
 
 module.exports = logger;

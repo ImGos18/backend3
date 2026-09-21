@@ -26,7 +26,7 @@ app.use("/api/products", productsRouter);
 app.use("/api/deliveries", deliveriesRouter);
 
 // Ruta de health check basica.
-app.get("/", (req, res) => {
+app.get("/api/health", (req, res) => {
   const responseJSON = {
     status: "up",
     message: "shipNow corriendo correctamente",

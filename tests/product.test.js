@@ -1,7 +1,7 @@
-const app = require("./../app.js");
-const ProductModel = require("./../models/product");
+const app = require("../src/app.js");
+const ProductModel = require("../src/models/product");
 const request = require("supertest");
-const fillProductData = require("./../../mocks/productsMock");
+const fillProductData = require("../mocks/productsMock");
 const { expect } = require("chai");
 const mongoose = require("mongoose");
 

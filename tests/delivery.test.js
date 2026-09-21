@@ -1,13 +1,13 @@
-const app = require("../app");
+const app = require("../src/app");
 const request = require("supertest");
 const { expect } = require("chai");
 const mongoose = require("mongoose");
-const UserModel = require("../models/user");
-const OrderModel = require("../models/order");
-const CourierModel = require("../models/courier");
-const DeliveryModel = require("../models/delivery");
-const fillUserData = require("../../mocks/userMocks");
-const fillCourierData = require("../../mocks/couriersMock");
+const UserModel = require("../src/models/user");
+const OrderModel = require("../src/models/order");
+const CourierModel = require("../src/models/courier");
+const DeliveryModel = require("../src/models/delivery");
+const fillUserData = require("../mocks/userMocks");
+const fillCourierData = require("../mocks/couriersMock");
 
 describe("Delivery API", () => {
   let order;

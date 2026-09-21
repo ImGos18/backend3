@@ -1,0 +1,39 @@
+services:
+  api:
+    build: .
+    image: shipnow-api:local
+    ports:
+      - "127.0.0.1:8080:8080"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: "8080"
+      MONGO_URI: mongodb://mongo:27017/shipnow
+    depends_on:
+      mongo:
+        condition: service_healthy
+    volumes:
+      - api_uploads:/App/uploads
+      - api_logs:/App/logs
+
+  mongo:
+    image: mongo:8.0
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test:
+        - CMD
+        - mongosh
+        - --quiet
+        - --eval
+        - "quit(db.adminCommand({ ping: 1 }).ok ? 0 : 1)"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  mongo_data:
+  api_uploads:
+  api_logs:

@@ -1,7 +1,7 @@
-const app = require("./../app");
-const UserModel = require("./../models/user");
+const app = require("../src/app");
+const UserModel = require("../src/models/user");
 const request = require("supertest");
-const fillUserData = require("./../../mocks/userMocks");
+const fillUserData = require("../mocks/userMocks");
 const { expect } = require("chai");
 const mongoose = require("mongoose");
 

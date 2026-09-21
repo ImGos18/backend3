@@ -7,22 +7,20 @@ paths:
         - Orders
       responses:
         "200":
-          description: Lista de pedidos obtenida correctamente
+          description: Lista de pedidos obtenida correctamente.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: success
-                payload:
-                  type: array
-                  items:
-                    $ref: "#/components/schemas/Order"
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Order"
     post:
       summary: Crear un nuevo pedido
-      description: Endpoint para crear un nuevo pedido en la base de datos.
       tags:
         - Orders
       requestBody:
@@ -30,74 +28,33 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - customer
-                - items
-                - deliveryAddress
-              properties:
-                customer:
-                  type: string
-                  example: 665f4d0a8f9a1b001234abce
-                items:
-                  type: array
-                  items:
-                    $ref: "#/components/schemas/Product"
-                deliveryAddress:
-                  type: string
-                  example: Calle Falsa 123, Ciudad, País
-                priority:
-                  type: string
-                  example: normal
+              $ref: "#/components/schemas/Order"
       responses:
         "201":
-          description: Pedido creado correctamente
+          description: Pedido creado correctamente.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: success
-                  payload:
-                    $ref: "#/components/schemas/Order"
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Order"
+
         "400":
-          description: Error al crear el pedido (por ejemplo, datos inválidos)
+          description: Datos inválidos o campos obligatorios faltantes.
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ErrorResponse"
-                  - type: object
-                    properties:
-                      status:
-                        type: string
-                        example: error
-                      error:
-                        type: integer
-                        example: 400
-                      message:
-                        type: string
-                        example: "Faltan campos requeridos para poder procesar la solicitud."
-        "404":
-          description: usuario no encontrado para asignar el pedido
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "500":
+          description: Error interno del servidor.
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ErrorResponse"
-                  - type: object
-                    properties:
-                      status:
-                        type: string
-                        example: error
-                      error:
-                        type: integer
-                        example: 404
-                      message:
-                        type: string
-                        example: "No se encontró el usuario con el ID proporcionado. para asignar el pedido."
+                $ref: "#/components/schemas/ErrorResponse"
 
   /api/orders/{id}:
     get:
@@ -114,45 +71,131 @@ paths:
           description: ID del pedido a obtener
       responses:
         "200":
-          description: Pedido obtenido correctamente
+          description: Pedido obtenido correctamente.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: success
-                  payload:
-                    $ref: "#/components/schemas/Order"
-        "404":
-          description: Pedido no encontrado
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Order"
+        "400":
+          description: El id ingresado no es valido
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                status: error
+                error: INVALID_OBJECT_ID
+                message: "El id ingresado no es valido"
 
+        "404":
+          description: No se encontro el pedido solicitado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                status: error
+                error: ORDER_NOT_FOUND
+                message: "No se encontro el pedido solicitado"
+
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                status: error
+                error: INTERNAL_SERVER_ERROR
+                message: "Ocurrio un error interno en el servidor "
+
+  /api/orders/{id}/status:
     patch:
-      summary: Actualizar un pedido
-      description: Actualiza el estado de un pedido segun el id
+      summary: Actualizar el estado de un pedido
       tags:
         - Orders
       parameters:
         - name: id
           in: path
           required: true
+          description: ID del pedido que se actualizará.
           schema:
             type: string
-            description: ID del pedido a actualizar
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: "#/components/schemas/successResponse"
-                - type: object
-                  properties:
-                    data:
-                      type: Object
-                      $ref: "#/components/schemas/Order"
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - pending
+                    - in_transit
+                    - delivered
+                  example: in_transit
+      responses:
+        "200":
+          description: Estado del pedido actualizado correctamente.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/successResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Order"
+
+        "400":
+          description: ID inválido, estado inválido o campos faltantes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                IdInvalido:
+                  value:
+                    status: error
+                    error: INVALID_OBJECT_ID
+                    message: "El id ingresado no es valido"
+                EstadoInvalido:
+                  value:
+                    status: error
+                    error: INVALID_ORDER_STATUS
+                    message: "El estado indicado no es valido para un pedido"
+                EstadoFaltante:
+                  value:
+                    status: error
+                    error: MISSING_REQUIRED_FIELDS
+                    message: "faltan los siguientes campos: status"
+
+        "404":
+          description: No se encontro el pedido solicitado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                status: error
+                error: ORDER_NOT_FOUND
+                message: "No se encontro el pedido solicitado"
+
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                status: error
+                error: INTERNAL_SERVER_ERROR
+                message: "Ocurrio un error interno en el servidor "

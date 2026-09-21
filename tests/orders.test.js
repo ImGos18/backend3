@@ -1,9 +1,9 @@
-const app = require("./../app");
-const UserModel = require("./../models/user");
-const OrderModel = require("./../models/order");
-const CourierModel = require("./../models/courier");
-const fillUserData = require("./../../mocks/userMocks");
-const fillCourierData = require("./../../mocks/couriersMock");
+const app = require("../src/app");
+const UserModel = require("../src/models/user");
+const OrderModel = require("../src/models/order");
+const CourierModel = require("../src/models/courier");
+const fillUserData = require("../mocks/userMocks");
+const fillCourierData = require("../mocks/couriersMock");
 const mongoose = require("mongoose");
 
 const request = require("supertest");

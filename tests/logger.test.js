@@ -1,6 +1,6 @@
 const request = require("supertest");
 const { expect } = require("chai");
-const app = require("../app.js");
+const app = require("../src/app.js");
 
 describe("Logger API", () => {
   it("Deberia responder con un mensaje indicando que se generaron los logs correctamente", async () => {

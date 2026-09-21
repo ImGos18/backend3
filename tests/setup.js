@@ -3,7 +3,7 @@ process.env.NODE_ENV = "test";
 const mongoose = require("mongoose");
 const fs = require("fs/promises");
 const path = require("path");
-const connectDB = require("../db");
+const connectDB = require("../src/db");
 
 let trackedDocuments;
 let trackedFiles;

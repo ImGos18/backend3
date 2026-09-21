@@ -1,8 +1,8 @@
 const request = require("supertest");
 const { expect } = require("chai");
-const app = require("../app");
-const CourierModel = require("../models/courier");
-const fillCourierData = require("./../../mocks/couriersMock");
+const app = require("../src/app");
+const CourierModel = require("../src/models/courier");
+const fillCourierData = require("../mocks/couriersMock");
 const mongoose = require("mongoose");
 
 describe("Couriers API", () => {

@@ -88,6 +88,11 @@ class OrderService {
     }
 
     const orderUpdated = await OrderRepository.updateStatus(id, status);
+
+    if (!orderUpdated) {
+      throw new AppError(ERROR_CODES.ORDER_NOT_FOUND);
+    }
+
     return orderUpdated;
   }
   static async getRandom() {

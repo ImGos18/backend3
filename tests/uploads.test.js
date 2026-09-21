@@ -3,13 +3,13 @@ const { expect } = require("chai");
 const fs = require("fs/promises");
 const path = require("path");
 const mongoose = require("mongoose");
-const app = require("./../app");
-const UserModel = require("../models/user");
-const CourierModel = require("../models/courier");
-const OrderModel = require("../models/order");
-const fillUserData = require("../../mocks/userMocks");
-const fillCourierData = require("../../mocks/couriersMock");
-const { MAX_FILE_SIZE } = require("../middlewares/upload.middleware");
+const app = require("../src/app");
+const UserModel = require("../src/models/user");
+const CourierModel = require("../src/models/courier");
+const OrderModel = require("../src/models/order");
+const fillUserData = require("../mocks/userMocks");
+const fillCourierData = require("../mocks/couriersMock");
+const { MAX_FILE_SIZE } = require("../src/middlewares/upload.middleware");
 
 const testFileOptions = {
   filename: "document.txt",

@@ -1,10 +1,10 @@
 const { expect } = require("chai");
 const request = require("supertest");
-const app = require("../app.js");
+const app = require("../src/app.js");
 
 describe("Health Check", () => {
   it("deberia devolver un json indicando que el servidor esta arriba", async () => {
-    const response = await request(app).get("/");
+    const response = await request(app).get("/api/health");
     expect(response.status).to.equal(200);
     expect(response.body).to.have.property("status").that.equals("up");
   });

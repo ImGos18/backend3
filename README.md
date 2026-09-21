@@ -13,20 +13,34 @@ Gestiona cinco entidades:
 - **Product** (producto): `name`, `price`, `stock`, `status` (available / out_of_stock).
 - **Delivery** (entrega): `orderId` (ref a Order), `courierId` (ref a Courier), `status` (assigned / in_transit / delivered), `assignedAt`.
 
-Regla de negocio principal (hoy embebida en la ruta de orders):
-`cost = weight * 10`. Al crear un envio tambien se dispara una notificacion falsa.
-Al consultar una entrega por id (`GET /api/deliveries/:id`) se llama inline a un
-"proveedor externo" de tracking falso (`src/services/trackingProvider.js`).
+La regla de negocio principal para las órdenes calcula el costo del envío como
+`cost = weight * 10`. Este cálculo se realiza en `orders.service.js`.
+
+## Arquitectura
+
+La aplicación está organizada en capas:
+
+- `src/routes/`: define los endpoints y conecta cada ruta con su controlador.
+- `src/controller/`: recibe las solicitudes HTTP y prepara las respuestas.
+- `src/services/`: contiene las validaciones y reglas de negocio.
+- `src/repositories/`: concentra el acceso a MongoDB mediante los modelos.
+- `src/models/`: define los modelos y esquemas principales de Mongoose.
+- `src/middlewares/`: contiene el manejo global de errores y la carga de archivos.
+- `src/config/`: centraliza las variables de entorno y la configuración del logger.
+- `src/docs/`: contiene la configuración y los archivos YAML de Swagger.
+- `src/errors/`: define los códigos, mensajes y la clase de errores de la aplicación.
+- `tests/`: contiene los tests funcionales con Mocha, Chai y Supertest.
+
+El flujo habitual de una solicitud es:
+
+`route → controller → service → repository → model`
+
+Los errores se envían al middleware global de errores, registrado al final de
+`src/app.js`
 
 ## Como correrlo
 
-Requisitos: Node.js 18 o superior y una instancia de MongoDB.
-
-Para levantar MongoDB rapido con Docker:
-
-```bash
-docker run -d -p 27017:27017 --name shipnow-mongo mongo
-```
+Requisitos: Node.js 22.13.0 o superior y una instancia de MongoDB.
 
 Tambien sirve una instalacion local de MongoDB o un cluster de MongoDB Atlas.
 La conexion se configura mediante variables de entorno; no hay que modificar el
@@ -39,12 +53,10 @@ npm install
 # 2. Crear el archivo de entorno y completar sus valores
 cp .env.example .env
 
-# 3. (Opcional) Cargar datos de ejemplo relacionados
-npm run seed
-
-# 4. Levantar el servidor
+# 3. Levantar el servidor
 npm start
-# o
+
+# este comando se utiliza para levantar un servidor de desarrollo usando concurrently para actualizar los archivos YAML de manera mas comoda actualizando la pagina cada vez que se realiza un cambio
 npm run dev
 ```
 
@@ -56,13 +68,13 @@ El archivo [`.env.example`](./.env.example) documenta todas las variables. El
 servidor valida las variables obligatorias al arrancar, mientras que el entorno
 `test` utiliza valores seguros por defecto para `PORT` y `SECRET`.
 
-| Variable         | Requerida en desarrollo | Uso                                                                        |
-| ---------------- | ----------------------- | -------------------------------------------------------------------------- |
-| `PORT`           | Si                      | Puerto HTTP del servidor.                                                  |
-| `SECRET`         | Si                      | Secreto de la aplicacion. No usar el valor de ejemplo en produccion.       |
-| `MONGO_URI`      | Si                      | URI de MongoDB para desarrollo/produccion.                                 |
-| `MONGO_TEST_URI` | No                      | URI exclusiva para tests; si se define, tiene prioridad sobre `MONGO_URI`. |
-| `NODE_ENV`       | Si                      | Entorno: `development`, `test` o `production`.                             |
+| Variable         | Requerida en desarrollo | Uso                                                                                                                          |
+| ---------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `PORT`           | Si                      | Puerto HTTP del servidor.                                                                                                    |
+| `SECRET`         | Si                      | Secreto de la aplicacion. No usar el valor de ejemplo en produccion.                                                         |
+| `MONGO_URI`      | Si                      | URI de MongoDB para desarrollo/produccion.                                                                                   |
+| `MONGO_TEST_URI` | No                      | URI exclusiva para tests. Solo se utiliza cuando `NODE_ENV=test`; si falta, se usa `mongodb://127.0.0.1:27017/shipnow_test`. |
+| `NODE_ENV`       | Si                      | Entorno: `development`, `test` o `production`.                                                                               |
 
 ## Testing funcional
 
@@ -80,12 +92,14 @@ aplicacion, Faker es una dependencia de produccion y queda instalado con
 npm test
 ```
 
+El comando ejecuta los archivos `tests/**/*.test.js` y utiliza
+`tests/setup.js` para conectar y desconectar MongoDB durante las pruebas.
+
 Los tests que acceden a datos requieren MongoDB. Se recomienda definir
-`MONGO_TEST_URI` con una base exclusiva, por ejemplo
-`mongodb://127.0.0.1:27017/shipnow_test`. Si no existe un `.env`, la suite usa
-esa URI local por defecto. Los hooks globales conectan antes de la suite,
-desconectan al finalizar y eliminan despues de cada caso solamente los
-documentos registrados por ese test.
+`MONGO_TEST_URI` con una base exclusiva. Si `MONGO_TEST_URI` no está definida,
+la suite utiliza `mongodb://127.0.0.1:27017/shipnow_test` por defecto. Los hooks
+globales conectan antes de la suite, desconectan al finalizar y eliminan después
+de cada caso solamente los documentos registrados por ese test.
 
 La aplicacion Express vive en `src/app.js`; la conexion a MongoDB y el
 `listen()` se ejecutan desde `src/server.js`. Esta separacion permite importar
@@ -95,7 +109,7 @@ la app en Supertest sin iniciar el servidor ni conectarse dos veces.
 
 | Metodo | Ruta                          | Descripcion                        |
 | ------ | ----------------------------- | ---------------------------------- |
-| GET    | `/`                           | Health check basico                |
+| GET    | `/api/health`                 | Health check basico                |
 | POST   | `/api/users`                  | Crear cliente                      |
 | GET    | `/api/users`                  | Listar clientes                    |
 | GET    | `/api/users/:id`              | Obtener cliente por id             |
@@ -114,7 +128,7 @@ la app en Supertest sin iniciar el servidor ni conectarse dos veces.
 | POST   | `/api/orders/:id/proof`       | Subir un comprobante de entrega    |
 | POST   | `/api/deliveries`             | Crear entrega (order + courier)    |
 | GET    | `/api/deliveries`             | Listar entregas                    |
-| GET    | `/api/deliveries/:id`         | Obtener entrega + tracking         |
+| GET    | `/api/deliveries/:id`         | Obtener entrega                    |
 | PATCH  | `/api/deliveries/:id/status`  | Cambiar estado de una entrega      |
 
 ### Carga de archivos
@@ -156,21 +170,33 @@ el archivo temporal se elimina y el error usa el formato general de la API.
 | POST   | `/api/mocks/Orders`     | crea ordenes de prueba y las guarda en la base de datos      |
 | GET    | `/api/mocks/Deliveries` | crea deliveries de prueba SIN guardarlos en la base de datos |
 | POST   | `/api/mocks/Deliveries` | crea deliveries de prueba y los guarda en la base de datos   |
+| GET    | `/api/mocks/Couriers`   | crea couriers de prueba SIN guardarlos en la base de datos   |
+| POST   | `/api/mocks/Couriers`   | crea couriers de prueba y los guarda en la base de datos     |
 
-### la cantidad de resultados generados por estos endpoints para hacer testing dependen de un objeto en el archivo index.js ubicado en la carpeta `constants` llamado `DEV_TESTING_VALUES.mockResults`, si se cambia el numero alli eso cambiara cuantos resultados arroja cada endpoint de mocking
+### Todos los endpoints de mocks requieren un cuerpo JSON con la propiedad `mockResults`, que indica la cantidad de registros que se generarán.
 
-Ejemplo de creacion de envio:
+Ejemplo para generar cinco usuarios sin guardarlos:
 
 ```bash
-curl -X POST http://localhost:8080/api/orders \
+curl -X GET http://localhost:8080/api/mocks/Users \
   -H "Content-Type: application/json" \
-  -d '{"customerName":"Ana Lopez","address":"Calle Falsa 123","weight":5}'
+  -d '{"mockResults":5}'
 ```
+
+Ejemplo para generar y guardar cinco productos:
+
+```bash
+curl -X POST http://localhost:8080/api/mocks/Products \
+  -H "Content-Type: application/json" \
+  -d '{"mockResults":5}'
+```
+
+`mockResults` debe ser un numero mayor que cero
 
 ## Probar con Postman
 
-En la carpeta `postman/` hay una coleccion lista para importar:
-`postman/ShipNow.postman_collection.json`.
+En la raíz del repositorio se encuentra una colección lista para importar:
+[`ShipNow API v1.postman_collection.json`](./ShipNow%20API%20v1.postman_collection.json).
 
 1. Abre Postman -> **Import** -> selecciona el archivo.
 2. La coleccion trae una variable `{{baseUrl}}` que por defecto apunta a
@@ -303,7 +329,7 @@ const loggerLevels =
 };
 ```
 
-para probar el correcto funcionamiento del modulo de loggin si se iniciar el servidor con `NODE_ENV = development` se realiza una peticion get al endpoint `/api/error` y la consola debe devolver un log de cada uno de los niveles:
+para probar el correcto funcionamiento del modulo de loggin si se iniciar el servidor con `NODE_ENV = development` o `NODE_ENV = test` se realiza una peticion get al endpoint `/api/loggerTest` y la consola debe devolver un log de cada uno de los niveles:
 
 ```bash
 DD-MM-YYYY HH:mm:ss [info]: Mensaje de prueba de info
@@ -314,7 +340,7 @@ DD-MM-YYYY HH:mm:ss [fatal]: Mensaje de prueba de fatal
 
 Ademas de guardar un log para los errores de tipo `error` y `fatal` no se subiran al repositorio ningun archivo .log ni ningun archivo que este dentro de la carpeta /log
 
-se puede probar que los logs esten funcionando correctamente si en development se ingresa al endpoint `/api/loggerTest`
+se puede probar que los logs esten funcionando correctamente ingresando al endpoint `/api/loggerTest` el cual solo esta disponible en `development` y `test`
 
 ## Documentacion web
 
@@ -329,10 +355,80 @@ para poder acceder a la documentacion web que se creo utilizando Swagger se pued
 - schemas
 - users
 
-# Entorno de puebas
+## Ejecutar con Docker Compose
 
-para realizar los test de de funcionamiento utilizar el comando `npm run test` y se ejecutaran todos los test que se encuentran en la carpeta `test`, los test se realizan utilizando mocha, chai y supertest
+Requisitos: Docker Desktop iniciado y Docker Compose disponible.
 
-# Corriendo la app desde un container Docker
+Compose ejecuta dos servicios: la API y MongoDB. La API espera
+a que MongoDB supere su healthcheck antes de iniciar.
 
-para volver esta app un contenedor de docker solo debes ejecutar el comando `docker build -t nombre_de_tu_imagen .` y luego `docker run --name Nombre_de_tu_container -p puerto_que_quieras_usar:8080 --env-file .env nombre_de_tu_imagen` recuerda que debes agregar las variables de entorno, de lo contrario la aplicacion no funcionara, guiate de el archivo .env.example para ver cuales son las variables que necesitas, si no quieres agregarlas en el comando `docker run` puedes agregarlas en el archivo Dockerfile con la instruccion `ENV nombre_variable=valor_variable` sin espacio entre el "=", al hacer eso la app estará corriendo en el puerto que hayas definido en tu maquina.
+### Variables de entorno
+
+En una instalación nueva, copia `.env.example` a `.env`:
+
+Si ya tienes `.env`, conserva ese archivo.
+
+Configura `SECRET` con un valor propio. Compose carga ese archivo
+y establece las siguientes variables para la API:
+
+- `NODE_ENV=production`
+- `PORT=8080`
+- `MONGO_URI=mongodb://mongo:27017/shipnow`
+
+Esta ejecución utiliza MongoDB dentro de Docker. No utiliza la
+conexión remota que pueda existir en `.env`, ni modifica ese archivo.
+
+### Construcción y ejecución
+
+Desde la raíz del proyecto, valida la configuración:
+
+```bash
+docker compose config
+```
+
+Construye la imagen de la API:
+
+```bash
+docker compose build
+```
+
+Inicia ambos servicios en segundo plano:
+
+```bash
+docker compose up -d
+```
+
+El puerto 8080 debe estar disponible.
+
+### Verificación
+
+Consulta el estado de los servicios:
+
+```bash
+docker compose ps
+```
+
+MongoDB debe aparecer como `healthy` y la API debe estar en ejecución.
+
+Comprueba el endpoint de salud: `http://localhost:8080/api/health`
+
+La respuesta debe contener `status: "up"`.
+
+Swagger está disponible en http://localhost:8080/api/docs.
+
+### Detener los servicios
+
+```bash
+docker compose down
+```
+
+Los datos de MongoDB, los archivos subidos y los logs se conservan
+en volúmenes de Docker.
+
+## Verificación de Criterios
+
+- **Documentación Swagger:** Navegar a `http://localhost:8080/api/docs` con el servidor corriendo.
+- **Suite de Tests:** Ejecutar `npm test` para correr los tests de integración con Mocha/Chai/Supertest.
+- **Docker:** Ejecutar `docker compose up --build -d`, comprobar MongoDB como `healthy` con `docker compose ps` y consultar `http://localhost:8080/api/health`.
+- **Mocks:** Con `NODE_ENV=development`, enviar `GET /api/mocks/Users` con el cuerpo `{"mockResults":5}` para generar datos sin guardarlos, o utilizar `POST` para generarlos y almacenarlos, esta misma logica funciona tambien con `courier, orders, products, deliveries`
+- **Subida de Archivos:** `POST /api/users/:id/documents` enviando campo `document` (PDF/JPEG, máx 5MB).
